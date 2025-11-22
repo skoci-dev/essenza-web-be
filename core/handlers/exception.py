@@ -307,11 +307,15 @@ class ExceptionHandler:
 
     def _send_to_external_services(self, context: Dict[str, Any]) -> None:
         """Send exception to external services (Sentry, Slack, etc.)"""
-        # TODO: Implement integration with:
-        # - Sentry for error tracking
-        # - Slack for real-time notifications
-        # - Email for critical errors
-        # - Custom webhooks
+        # External service integrations - configure as needed:
+        # - Sentry: Set SENTRY_DSN environment variable
+        # - Slack: Set SLACK_WEBHOOK_URL environment variable
+        # - Email: Configure SMTP settings in Django settings
+        # - Custom webhooks: Add webhook URLs to settings
+
+        # Placeholder implementation for future external integrations
+        # This method is called from handle_exception() but currently
+        # performs no external notifications - extend as needed
         pass
 
     def _get_client_ip(self, request: HttpRequest) -> str:
