@@ -1,0 +1,11 @@
+# SonarQube GitIgnore Rules
+# Add these lines to your .gitignore file
+
+# SonarQube scanner working directory
+.scannerwork/
+
+# SonarQube analysis reports
+sonar-report.json
+
+# SonarQube temporary files
+.sonar/
