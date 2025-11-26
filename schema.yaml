@@ -1966,6 +1966,506 @@ paths:
                         format: date-time
                         example: '2025-11-22T23:35:01.660931'
           description: ''
+  /int/v1/banners:
+    post:
+      operationId: int_v1_banner_create_banner
+      description: Create a new banner with file upload support.
+      tags:
+      - Internal / Banner
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostCreateBannerRequestRequest'
+        required: true
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Banner created successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Banner created successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 6
+                      image:
+                        type: string
+                        format: uri
+                        example: /media/uploads/banners/lovepik-taobao-tmall-e-commerce-banner-background-image_500603827_Z4EGq4A.jpg
+                      title:
+                        type: string
+                        example: string
+                      subtitle:
+                        type: string
+                        example: string
+                      link_url:
+                        type: string
+                        example: string
+                      order_no:
+                        type: integer
+                        example: 0
+                      is_active:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T19:06:14.763201+07:00'
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T19:06:14.763222+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T19:06:14.770300'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                description: Data validation failed
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 422
+                  message:
+                    type: string
+                    example: Data validation failed
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          example: image
+                        message:
+                          type: string
+                          example: Upload a valid image. The file you uploaded was
+                            either not an image or a corrupted image.
+                        code:
+                          type: string
+                          example: invalid_image
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T19:11:39.498145'
+          description: ''
+    get:
+      operationId: int_v1_banner_get_banners
+      description: Retrieve all banners.
+      parameters:
+      - in: query
+        name: page
+        schema:
+          type: integer
+          default: 1
+        description: 'Page number (default: 1)'
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          default: 20
+        description: 'Number of items per page (default: 20, max: 100)'
+      tags:
+      - Internal / Banner
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Banners retrieved successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Banners retrieved successfully.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 6
+                        title:
+                          type: string
+                          example: string
+                        subtitle:
+                          type: string
+                          example: string
+                        image:
+                          type: string
+                          example: /media/uploads/banners/lovepik-taobao-tmall-e-commerce-banner-background-image_500603827_Z4EGq4A.jpg
+                        link_url:
+                          type: string
+                          example: string
+                        order_no:
+                          type: integer
+                          example: 0
+                        is_active:
+                          type: boolean
+                          example: true
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: '2025-11-26T19:06:14.763201+07:00'
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: '2025-11-26T19:06:14.763222+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T19:37:20.085607'
+                      pagination:
+                        type: object
+                        properties:
+                          current_page:
+                            type: integer
+                            example: 1
+                          per_page:
+                            type: integer
+                            example: 20
+                          total_pages:
+                            type: integer
+                            example: 1
+                          total_items:
+                            type: integer
+                            example: 1
+                          has_next:
+                            type: boolean
+                            example: false
+                          has_previous:
+                            type: boolean
+                            example: false
+          description: ''
+  /int/v1/banners/{id}:
+    post:
+      operationId: int_v1_banner_update_specific_banner
+      description: Update a specific banner by its ID.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Banner
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostUpdateBannerRequestRequest'
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Banner updated successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Banner updated successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 6
+                      title:
+                        type: string
+                        example: string
+                      subtitle:
+                        type: string
+                        example: new subtitle
+                      image:
+                        type: string
+                        example: /media/uploads/banners/lovepik-taobao-tmall-e-commerce-banner-background-image_500603827_aexFCkx.jpg
+                      link_url:
+                        type: string
+                        example: ''
+                      order_no:
+                        type: integer
+                        example: 0
+                      is_active:
+                        type: boolean
+                        example: false
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T19:06:14.763201+07:00'
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T20:01:22.298730+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T20:01:22.307124'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Banner not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Banner with id '221' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T20:04:41.117151'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                description: Data validation failed
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 422
+                  message:
+                    type: string
+                    example: Data validation failed
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          example: image
+                        message:
+                          type: string
+                          example: Upload a valid image. The file you uploaded was
+                            either not an image or a corrupted image.
+                        code:
+                          type: string
+                          example: invalid_image
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T20:02:42.001064'
+          description: ''
+    delete:
+      operationId: int_v1_banner_delete_specific_banner
+      description: Delete a specific banner by its ID.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Banner
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Banner deleted successfully.
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Banner deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Banner not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Banner with id '221' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T20:04:41.117151'
+          description: ''
+    get:
+      operationId: int_v1_banner_get_specific_banner
+      description: Retrieve a specific banner by its ID.
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Banner
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Banner retrieved successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Banner retrieved successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 6
+                      title:
+                        type: string
+                        example: string
+                      subtitle:
+                        type: string
+                        example: string
+                      image:
+                        type: string
+                        example: /media/uploads/banners/lovepik-taobao-tmall-e-commerce-banner-background-image_500603827_Z4EGq4A.jpg
+                      link_url:
+                        type: string
+                        example: string
+                      order_no:
+                        type: integer
+                        example: 0
+                      is_active:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T19:06:14.763201+07:00'
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T19:06:14.763222+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T19:48:32.052814'
+          description: ''
+  /media/{file_path}:
+    get:
+      operationId: general_retrieve_media
+      description: Endpoint to retrieve media files
+      summary: Retrieve Media
+      parameters:
+      - in: path
+        name: file_path
+        schema:
+          type: string
+        required: true
+      tags:
+      - General
+      responses: {}
 components:
   schemas:
     PatchedPatchAuthUserProfileRequestRequest:
@@ -2089,6 +2589,32 @@ components:
       required:
       - password
       - username
+    PostCreateBannerRequestRequest:
+      type: object
+      description: Serializer for creating a new banner.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        subtitle:
+          type: string
+          maxLength: 255
+        image:
+          type: string
+          format: binary
+        link_url:
+          type: string
+          maxLength: 255
+        order_no:
+          type: integer
+          default: 0
+        is_active:
+          type: boolean
+      required:
+      - image
+      - is_active
+      - title
     PostCreateMenuItemRequestRequest:
       type: object
       description: Serializer for creating a new MenuItem.
@@ -2189,6 +2715,27 @@ components:
       required:
       - platform
       - url
+    PostUpdateBannerRequestRequest:
+      type: object
+      description: Serializer for updating an existing banner.
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 255
+        subtitle:
+          type: string
+          maxLength: 255
+        image:
+          type: string
+          format: binary
+        link_url:
+          type: string
+          maxLength: 255
+        order_no:
+          type: integer
+        is_active:
+          type: boolean
     PutAuthTokenRequestRequest:
       type: object
       description: User token refresh request schema.
@@ -2233,3 +2780,5 @@ tags:
   description: Application menu management
 - name: Internal / Menu Item
   description: Application menu item management
+- name: Internal / Banner
+  description: Application banner management
