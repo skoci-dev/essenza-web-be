@@ -48,3 +48,23 @@ class GeneralApi:
             return func(*args, **kwargs)
 
         return wrapper
+
+    @staticmethod
+    def retrieve_media(func):
+        """
+        Decorator for media retrieval endpoint documentation
+        """
+
+        @extend_schema(
+            operation_id="general_retrieve_media",
+            tags=[TAGS],
+            summary="Retrieve Media",
+            description="Endpoint to retrieve media files",
+            auth=[],
+            responses={},
+        )
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper
