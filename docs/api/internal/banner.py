@@ -17,6 +17,7 @@ class BannerAPI:
         @extend_schema(
             tags=TAGS,
             operation_id="int_v1_banner_create_banner",
+            summary="Create Banner",
             description="Create a new banner with file upload support.",
             request={"multipart/form-data": serializers.PostCreateBannerRequest},
             responses={
@@ -125,6 +126,7 @@ class BannerAPI:
         @extend_schema(
             tags=TAGS,
             operation_id="int_v1_banner_get_banners",
+            summary="Retrieve all banners",
             description="Retrieve all banners.",
             parameters=DEFAULT_PAGINATION_PARAMS,
             responses={
@@ -219,6 +221,7 @@ class BannerAPI:
         @extend_schema(
             tags=TAGS,
             operation_id="int_v1_banner_get_specific_banner",
+            summary="Retrieve a specific banner by ID",
             description="Retrieve a specific banner by its ID.",
             responses={
                 200: {
@@ -283,6 +286,7 @@ class BannerAPI:
         @extend_schema(
             tags=TAGS,
             operation_id="int_v1_banner_update_specific_banner",
+            summary="Update a specific banner by ID",
             description="Update a specific banner by its ID.",
             request={"multipart/form-data": serializers.PostUpdateBannerRequest},
             responses={
@@ -412,6 +416,7 @@ class BannerAPI:
         @extend_schema(
             tags=TAGS,
             operation_id="int_v1_banner_delete_specific_banner",
+            summary="Delete a specific banner by ID",
             description="Delete a specific banner by its ID.",
             responses={
                 200: {
