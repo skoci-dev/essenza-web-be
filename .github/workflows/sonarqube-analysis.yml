@@ -1,4 +1,4 @@
-name: 🔍 SonarQube Code Quality Analysis
+name: 🔍 Code Quality Analysis
 
 on:
   pull_request:
@@ -26,7 +26,7 @@ env:
 
 jobs:
   sonar-analysis:
-    name: 🔍 SonarQube Analysis
+    name: SonarQube Scanner Analysis
     runs-on: self-hosted
     timeout-minutes: 20
 
