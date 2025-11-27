@@ -1,0 +1,3 @@
+"""
+Product internal app package
+"""

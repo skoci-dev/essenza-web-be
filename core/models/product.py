@@ -1,23 +1,23 @@
 from django.db import models
-from core.models._base import TimeStampedModel
+from core.models._base import TimeStampedModel, FileUploadModel, upload_to
 from core.enums import ProductType
 from core.models.brochure import Brochure
 
 
-class Product(TimeStampedModel):
+class Product(TimeStampedModel, FileUploadModel):
     id = models.BigAutoField(primary_key=True, editable=False)
     slug: models.CharField = models.CharField(max_length=255, unique=True)
     name: models.CharField = models.CharField(max_length=255)
-    lang: models.CharField = models.CharField(max_length=10, default='en')
+    lang: models.CharField = models.CharField(max_length=10, default="en")
     model: models.CharField = models.CharField(max_length=100, blank=True)
     size: models.CharField = models.CharField(max_length=100, blank=True)
     description: models.TextField = models.TextField(blank=True)
     product_type: models.CharField = models.CharField(
-        max_length=20,
-        choices=ProductType.choices,
-        blank=True
+        max_length=20, choices=ProductType.choices, blank=True
     )
-    image: models.CharField = models.CharField(max_length=255, blank=True)
+    image: models.ImageField = models.ImageField(
+        upload_to=upload_to("products"), blank=True
+    )
     gallery: models.JSONField = models.JSONField(blank=True)
     brochure: models.ForeignKey = models.ForeignKey(
         Brochure,

@@ -517,6 +517,46 @@ paths:
                         example: '2025-11-14T02:40:02.902052'
           description: ''
   /int/v1/settings/{slug}:
+    delete:
+      operationId: int_v1_specific_setting_delete
+      description: Endpoint to delete a specific application setting by its slug.
+      summary: Delete Specific Application Setting
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Internal / Settings
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Setting deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Setting deleted successfully
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-14T02:47:35.550732'
+          description: ''
     get:
       operationId: int_v1_specific_setting_retrieve
       description: Endpoint to retrieve a specific application setting by its slug.
@@ -660,46 +700,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-14T02:40:02.893714+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-14T02:47:35.550732'
-          description: ''
-    delete:
-      operationId: int_v1_specific_setting_delete
-      description: Endpoint to delete a specific application setting by its slug.
-      summary: Delete Specific Application Setting
-      parameters:
-      - in: path
-        name: slug
-        schema:
-          type: string
-        required: true
-      tags:
-      - Internal / Settings
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Setting deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Setting deleted successfully
                   meta:
                     type: object
                     properties:
@@ -880,6 +880,46 @@ paths:
                         example: '2025-11-13T00:16:58.443714'
           description: ''
   /int/v1/social-media/{id}:
+    delete:
+      operationId: int_v1_social_media_delete
+      description: Endpoint for deleting a social media setting by its primary key
+      summary: Delete Social Media
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Social Media
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Social media data deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Social media data deleted successfully
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-14T01:45:12.345678'
+          description: ''
     get:
       operationId: int_v1_social_media_retrieve
       description: Endpoint for retrieving a specific social media setting by its
@@ -1015,46 +1055,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-14T01:32:04.715422'
-          description: ''
-    delete:
-      operationId: int_v1_social_media_delete
-      description: Endpoint for deleting a social media setting by its primary key
-      summary: Delete Social Media
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Social Media
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Social media data deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Social media data deleted successfully
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-14T01:45:12.345678'
           description: ''
   /int/v1/menus:
     get:
@@ -1218,6 +1218,70 @@ paths:
                         example: '2025-11-16T03:08:02.321171'
           description: ''
   /int/v1/menus/{id}:
+    delete:
+      operationId: int_v1_specific_menu_delete
+      description: Endpoint to delete a specific application menu by its ID.
+      summary: Delete Specific Application Menu
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Menu
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Menu deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Menu deleted successfully
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-16T03:11:44.940787'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Menu not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Menu with id '44' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-16T03:10:46.083547'
+          description: ''
     get:
       operationId: int_v1_specific_menu_get
       description: Endpoint to retrieve a specific application menu by its ID.
@@ -1414,70 +1478,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-16T03:15:29.496915'
-          description: ''
-    delete:
-      operationId: int_v1_specific_menu_delete
-      description: Endpoint to delete a specific application menu by its ID.
-      summary: Delete Specific Application Menu
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Menu
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Menu deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Menu deleted successfully
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-16T03:11:44.940787'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Menu not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Menu with id '44' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-16T03:10:46.083547'
           description: ''
   /int/v1/menus/{menu_id}/items:
     get:
@@ -1703,6 +1703,70 @@ paths:
                         example: '2025-11-22T23:23:17.220288'
           description: ''
   /int/v1/menu-items/{id}:
+    delete:
+      operationId: int_v1_delete_specific_menu_item
+      description: Delete a specific menu item by its ID.
+      summary: Delete Specific Menu Item
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Menu Item
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Menu item deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Menu item deleted successfully
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-22T23:54:17.921024'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: MenuItem not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: MenuItem with id '2' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-22T23:54:49.696625'
+          description: ''
     get:
       operationId: int_v1_get_specific_menu_item
       description: Retrieve a specific menu item by its ID.
@@ -1901,70 +1965,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-22T23:52:37.374021'
-          description: ''
-    delete:
-      operationId: int_v1_delete_specific_menu_item
-      description: Delete a specific menu item by its ID.
-      summary: Delete Specific Menu Item
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Menu Item
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Menu item deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Menu item deleted successfully
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-22T23:54:17.921024'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: MenuItem not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: MenuItem with id '2' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-22T23:54:49.696625'
           description: ''
   /int/v1/banners:
     get:
@@ -2182,6 +2182,69 @@ paths:
                         example: '2025-11-26T19:11:39.498145'
           description: ''
   /int/v1/banners/{id}:
+    delete:
+      operationId: int_v1_banner_delete_specific_banner
+      description: Delete a specific banner by its ID.
+      summary: Delete a specific banner by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Banner
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Banner deleted successfully.
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Banner deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Banner not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Banner with id '221' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T20:04:41.117151'
+          description: ''
     get:
       operationId: int_v1_banner_get_specific_banner
       description: Retrieve a specific banner by its ID.
@@ -2253,69 +2316,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-26T19:48:32.052814'
-          description: ''
-    delete:
-      operationId: int_v1_banner_delete_specific_banner
-      description: Delete a specific banner by its ID.
-      summary: Delete a specific banner by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Banner
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Banner deleted successfully.
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Banner deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Banner not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Banner with id '221' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-26T20:04:41.117151'
           description: ''
     post:
       operationId: int_v1_banner_update_specific_banner
@@ -2542,6 +2542,70 @@ paths:
                             example: false
           description: ''
   /int/v1/subscribers/{id}:
+    delete:
+      operationId: int_v1_delete_subscriber
+      description: Delete a specific subscriber by its ID.
+      summary: Delete Subscriber
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Subscriber
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Subscriber deleted successfully.
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Subscriber deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-27T20:26:17.949363'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Subscriber not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Subscriber with id '12' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-27T20:24:37.935078'
+          description: ''
     get:
       operationId: int_v1_get_specific_subscriber
       description: Retrieve a specific subscriber by its ID.
@@ -2595,70 +2659,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-27T20:25:27.623802'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Subscriber not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Subscriber with id '12' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-27T20:24:37.935078'
-          description: ''
-    delete:
-      operationId: int_v1_delete_subscriber
-      description: Delete a specific subscriber by its ID.
-      summary: Delete Subscriber
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Subscriber
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Subscriber deleted successfully.
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Subscriber deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-27T20:26:17.949363'
           description: ''
         '400':
           content:
@@ -2924,108 +2924,6 @@ paths:
                         example: '2025-11-28T10:30:00.000000'
           description: ''
   /int/v1/pages/{id}:
-    get:
-      operationId: int_v1_page_get_specific_page
-      description: Retrieve a specific page by its ID.
-      summary: Retrieve a specific page by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Page
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Page retrieved successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Page retrieved successfully.
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      slug:
-                        type: string
-                        example: about-us
-                      title:
-                        type: string
-                        example: About Us
-                      content:
-                        type: string
-                        example: <p>Welcome to our company...</p>
-                      meta_title:
-                        type: string
-                        example: About Us - Company Name
-                      meta_description:
-                        type: string
-                        example: Learn more about our company history and values.
-                      meta_keywords:
-                        type: string
-                        example: about, company, history, values
-                      template:
-                        type: string
-                        example: default
-                      is_active:
-                        type: boolean
-                        example: true
-                      created_at:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T10:30:00.000000+07:00'
-                      updated_at:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T10:30:00.000000+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T10:30:00.000000'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Page not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Page with id '99' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T10:30:00.000000'
-          description: ''
     delete:
       operationId: int_v1_page_delete_specific_page
       description: Delete a specific page by its ID.
@@ -3202,6 +3100,108 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-28T11:30:00.000000'
+          description: ''
+    get:
+      operationId: int_v1_page_get_specific_page
+      description: Retrieve a specific page by its ID.
+      summary: Retrieve a specific page by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Page
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Page retrieved successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Page retrieved successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: about-us
+                      title:
+                        type: string
+                        example: About Us
+                      content:
+                        type: string
+                        example: <p>Welcome to our company...</p>
+                      meta_title:
+                        type: string
+                        example: About Us - Company Name
+                      meta_description:
+                        type: string
+                        example: Learn more about our company history and values.
+                      meta_keywords:
+                        type: string
+                        example: about, company, history, values
+                      template:
+                        type: string
+                        example: default
+                      is_active:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000+07:00'
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Page not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Page with id '99' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000'
           description: ''
   /int/v1/pages/{id}/toggle:
     patch:
@@ -3420,6 +3420,1219 @@ paths:
                         format: date-time
                         example: '2025-11-28T10:30:00.000000'
           description: ''
+  /int/v1/products:
+    get:
+      operationId: int_v1_product_get_products
+      description: Retrieve all products with optional filtering by type, language,
+        and search.
+      summary: Retrieve all products
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: Filter by active status
+      - in: query
+        name: lang
+        schema:
+          type: string
+        description: Filter by language code
+      - in: query
+        name: page
+        schema:
+          type: integer
+          default: 1
+        description: 'Page number (default: 1)'
+      - in: query
+        name: page_size
+        schema:
+          type: integer
+          default: 20
+        description: 'Number of items per page (default: 20, max: 100)'
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: Search in name, description, and model
+      - in: query
+        name: type
+        schema:
+          type: string
+          enum:
+          - dinding
+          - lantai
+        description: Filter by product type
+      tags:
+      - Internal / Product
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Products retrieved successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Products retrieved successfully.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        slug:
+                          type: string
+                          example: ceramic-tile-floor-01
+                        name:
+                          type: string
+                          example: Premium Ceramic Floor Tile
+                        lang:
+                          type: string
+                          example: en
+                        model:
+                          type: string
+                          example: CT-FL-001
+                        size:
+                          type: string
+                          example: 60x60 cm
+                        description:
+                          type: string
+                          example: High-quality ceramic floor tile suitable for residential
+                            and commercial use.
+                        product_type:
+                          type: string
+                          example: lantai
+                        image:
+                          type: string
+                          format: uri
+                          example: /media/uploads/products/ceramic-tile-floor-01_main.jpg
+                        gallery:
+                          type: array
+                          items:
+                            type: string
+                            format: uri
+                          example:
+                          - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_0.jpg
+                        brochure:
+                          type: object
+                          nullable: true
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            title:
+                              type: string
+                              example: Product Brochure
+                            file_url:
+                              type: string
+                              format: uri
+                              example: /media/brochures/product-brochure.pdf
+                        meta_title:
+                          type: string
+                          example: Premium Ceramic Floor Tile - High Quality
+                        meta_description:
+                          type: string
+                          example: High-quality ceramic floor tile suitable for residential
+                            and commercial use.
+                        meta_keywords:
+                          type: string
+                          example: ceramic, tile, floor, premium
+                        is_active:
+                          type: boolean
+                          example: true
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: '2025-11-28T10:30:00.000000+07:00'
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: '2025-11-28T10:30:00.000000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000'
+                      pagination:
+                        type: object
+                        properties:
+                          current_page:
+                            type: integer
+                            example: 1
+                          per_page:
+                            type: integer
+                            example: 20
+                          total_pages:
+                            type: integer
+                            example: 5
+                          total_items:
+                            type: integer
+                            example: 95
+                          has_next:
+                            type: boolean
+                            example: true
+                          has_previous:
+                            type: boolean
+                            example: false
+          description: ''
+    post:
+      operationId: int_v1_product_create_product
+      description: Create a new product with file upload support.
+      summary: Create Product
+      tags:
+      - Internal / Product
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostCreateProductRequestRequest'
+        required: true
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product created successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product created successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: ceramic-tile-floor-01
+                      name:
+                        type: string
+                        example: Premium Ceramic Floor Tile
+                      lang:
+                        type: string
+                        example: en
+                      model:
+                        type: string
+                        example: CT-FL-001
+                      size:
+                        type: string
+                        example: 60x60 cm
+                      description:
+                        type: string
+                        example: High-quality ceramic floor tile suitable for residential
+                          and commercial use.
+                      product_type:
+                        type: string
+                        example: lantai
+                      image:
+                        type: string
+                        format: uri
+                        example: /media/uploads/products/ceramic-tile-floor-01_main.jpg
+                      gallery:
+                        type: array
+                        items:
+                          type: string
+                          format: uri
+                        example:
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_0.jpg
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_1.jpg
+                      brochure:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          title:
+                            type: string
+                            example: Product Brochure
+                          file_url:
+                            type: string
+                            format: uri
+                            example: /media/brochures/product-brochure.pdf
+                      meta_title:
+                        type: string
+                        example: Premium Ceramic Floor Tile - High Quality
+                      meta_description:
+                        type: string
+                        example: High-quality ceramic floor tile suitable for residential
+                          and commercial use. Available in multiple sizes and finishes.
+                      meta_keywords:
+                        type: string
+                        example: ceramic, tile, floor, premium, lantai
+                      is_active:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000+07:00'
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Validation error
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Product with this slug already exists.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000'
+          description: ''
+  /int/v1/products/{id}:
+    delete:
+      operationId: int_v1_product_delete_specific_product
+      description: Delete a specific product by its ID.
+      summary: Delete a specific product by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Product
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T12:15:45.250000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Product not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Product with id '99' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T12:15:45.250000'
+          description: ''
+    put:
+      operationId: int_v1_product_update_specific_product
+      description: Update a specific product by its ID.
+      summary: Update a specific product by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Product
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PutUpdateProductRequestRequest'
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product updated successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product updated successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: ceramic-tile-floor-01-updated
+                      name:
+                        type: string
+                        example: Updated Premium Ceramic Floor Tile
+                      lang:
+                        type: string
+                        example: en
+                      model:
+                        type: string
+                        example: CT-FL-001-UPD
+                      size:
+                        type: string
+                        example: 80x80 cm
+                      description:
+                        type: string
+                        example: Updated high-quality ceramic floor tile with enhanced
+                          durability.
+                      product_type:
+                        type: string
+                        example: lantai
+                      image:
+                        type: string
+                        format: uri
+                        example: /media/uploads/products/ceramic-tile-floor-01-updated_main.jpg
+                      gallery:
+                        type: array
+                        items:
+                          type: string
+                          format: uri
+                        example:
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_0.jpg
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_1.jpg
+                      brochure:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          title:
+                            type: string
+                            example: Updated Product Brochure
+                          file_url:
+                            type: string
+                            format: uri
+                            example: /media/brochures/updated-ceramic-tile-floor-brochure.pdf
+                      meta_title:
+                        type: string
+                        example: Updated Premium Ceramic Floor Tile
+                      meta_description:
+                        type: string
+                        example: Enhanced ceramic floor tile with improved features.
+                      meta_keywords:
+                        type: string
+                        example: updated ceramic tile, premium flooring, enhanced
+                          durability
+                      is_active:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000+07:00'
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T11:45:30.125000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T11:45:30.130000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Product not found or validation error
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Product with id '99' does not exist.
+                  errors:
+                    type: object
+                    properties:
+                      name:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                        - This field is required.
+                      product_type:
+                        type: array
+                        items:
+                          type: string
+                        example:
+                        - Select a valid choice. invalid_type is not one of the available
+                          choices.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T11:45:30.130000'
+          description: ''
+    get:
+      operationId: int_v1_product_get_specific_product
+      description: Retrieve a specific product by its ID.
+      summary: Retrieve a specific product by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Product
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product retrieved successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product retrieved successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: ceramic-tile-floor-01
+                      name:
+                        type: string
+                        example: Premium Ceramic Floor Tile
+                      lang:
+                        type: string
+                        example: en
+                      model:
+                        type: string
+                        example: CT-FL-001
+                      size:
+                        type: string
+                        example: 60x60 cm
+                      description:
+                        type: string
+                        example: High-quality ceramic floor tile suitable for residential
+                          and commercial use. Features excellent durability and water
+                          resistance.
+                      product_type:
+                        type: string
+                        example: lantai
+                      image:
+                        type: string
+                        format: uri
+                        example: /media/uploads/products/ceramic-tile-floor-01_main.jpg
+                      gallery:
+                        type: array
+                        items:
+                          type: string
+                          format: uri
+                        example:
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_0.jpg
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_1.jpg
+                      brochure:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          title:
+                            type: string
+                            example: Premium Ceramic Floor Tile Brochure
+                          file_url:
+                            type: string
+                            format: uri
+                            example: /media/brochures/ceramic-tile-floor-brochure.pdf
+                      meta_title:
+                        type: string
+                        example: Premium Ceramic Floor Tile - High Quality Flooring
+                          Solution
+                      meta_description:
+                        type: string
+                        example: Discover our premium ceramic floor tiles. Perfect
+                          for residential and commercial spaces with excellent durability
+                          and modern design.
+                      meta_keywords:
+                        type: string
+                        example: ceramic tile, floor tile, premium flooring, lantai
+                          keramik, durable tiles
+                      is_active:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000+07:00'
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:35:22.125000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:35:22.130000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Product not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Product with id '99' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:35:22.130000'
+          description: ''
+  /int/v1/products/{id}/toggle:
+    patch:
+      operationId: int_v1_product_toggle_product_status
+      description: Toggle product active status by its ID.
+      summary: Toggle product active status
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPatchToggleProductStatusRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedPatchToggleProductStatusRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedPatchToggleProductStatusRequestRequest'
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product status updated successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product status updated successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: ceramic-tile-floor-01
+                      name:
+                        type: string
+                        example: Premium Ceramic Floor Tile
+                      product_type:
+                        type: string
+                        example: lantai
+                      is_active:
+                        type: boolean
+                        example: false
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T13:20:15.500000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T13:20:15.505000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Product not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Product with id '99' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T13:20:15.505000'
+          description: ''
+  /int/v1/products/slug/{slug}:
+    get:
+      operationId: int_v1_product_get_product_by_slug
+      description: Retrieve a product by its slug.
+      summary: Retrieve product by slug
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Internal / Product
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product retrieved successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product retrieved successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: ceramic-tile-floor-01
+                      name:
+                        type: string
+                        example: Premium Ceramic Floor Tile
+                      lang:
+                        type: string
+                        example: en
+                      model:
+                        type: string
+                        example: CT-FL-001
+                      size:
+                        type: string
+                        example: 60x60 cm
+                      description:
+                        type: string
+                        example: High-quality ceramic floor tile suitable for residential
+                          and commercial use.
+                      product_type:
+                        type: string
+                        example: lantai
+                      image:
+                        type: string
+                        format: uri
+                        example: /media/uploads/products/ceramic-tile-floor-01_main.jpg
+                      gallery:
+                        type: array
+                        items:
+                          type: string
+                          format: uri
+                        example:
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_0.jpg
+                      brochure:
+                        type: object
+                        nullable: true
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          title:
+                            type: string
+                            example: Premium Ceramic Floor Tile Brochure
+                          file_url:
+                            type: string
+                            format: uri
+                            example: /media/brochures/ceramic-tile-floor-brochure.pdf
+                      meta_title:
+                        type: string
+                        example: Premium Ceramic Floor Tile
+                      meta_description:
+                        type: string
+                        example: High-quality ceramic floor tile suitable for residential
+                          and commercial use.
+                      meta_keywords:
+                        type: string
+                        example: ceramic tile, floor tile, premium flooring
+                      is_active:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000+07:00'
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:30:00.000000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:35:30.245000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Product not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Product with slug 'non-existent' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T10:35:30.245000'
+          description: ''
+  /int/v1/products/{id}/image:
+    post:
+      operationId: int_v1_product_upload_product_image
+      description: Upload main image for a specific product.
+      summary: Upload product main image
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Product
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostUploadProductImageRequestRequest'
+        required: true
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product image uploaded successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product image uploaded successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: ceramic-tile-floor-01
+                      name:
+                        type: string
+                        example: Premium Ceramic Floor Tile
+                      image:
+                        type: string
+                        format: uri
+                        example: /media/uploads/products/ceramic-tile-floor-01_main.jpg
+                      product_type:
+                        type: string
+                        example: lantai
+                      is_active:
+                        type: boolean
+                        example: true
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T14:10:35.200000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T14:10:35.205000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Invalid file or product not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid file format. Only JPG, JPEG, PNG, GIF, and WEBP
+                      are allowed.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T14:10:35.205000'
+          description: ''
+  /int/v1/products/{id}/gallery:
+    post:
+      operationId: int_v1_product_upload_product_gallery
+      description: Upload gallery images for a specific product.
+      summary: Upload product gallery images
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Product
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostUploadProductGalleryRequestRequest'
+        required: true
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product gallery uploaded successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product gallery uploaded successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: ceramic-tile-floor-01
+                      name:
+                        type: string
+                        example: Premium Ceramic Floor Tile
+                      gallery:
+                        type: array
+                        items:
+                          type: string
+                          format: uri
+                        example:
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_0.jpg
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_1.jpg
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_2.jpg
+                      product_type:
+                        type: string
+                        example: lantai
+                      is_active:
+                        type: boolean
+                        example: true
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T14:25:40.800000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T14:25:40.805000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Invalid files or product not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: At least one image file is required.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T14:25:40.805000'
+          description: ''
+  /int/v1/products/{id}/gallery/{index}:
+    delete:
+      operationId: int_v1_product_delete_product_gallery_image
+      description: Delete a specific image from product gallery by index.
+      summary: Delete product gallery image
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: index
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Product
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Gallery image deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Gallery image deleted successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: ceramic-tile-floor-01
+                      name:
+                        type: string
+                        example: Premium Ceramic Floor Tile
+                      gallery:
+                        type: array
+                        items:
+                          type: string
+                          format: uri
+                        example:
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_0.jpg
+                        - /media/uploads/products/gallery/ceramic-tile-floor-01_gallery_2.jpg
+                      product_type:
+                        type: string
+                        example: lantai
+                      is_active:
+                        type: boolean
+                        example: true
+                      updated_at:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T15:05:20.300000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T15:05:20.305000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Product or gallery image not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Gallery image at index 5 does not exist for product 1.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T15:05:20.305000'
+          description: ''
   /pub/v1/subscribers:
     post:
       operationId: pub_v1_create_subscriber
@@ -3542,6 +4755,13 @@ components:
         is_active:
           type: boolean
           description: Whether the page should be active or inactive.
+    PatchedPatchToggleProductStatusRequestRequest:
+      type: object
+      description: Serializer for toggling product active status.
+      properties:
+        is_active:
+          type: boolean
+          description: Product active status
     PatchedPatchUpdateMenuItemRequestRequest:
       type: object
       description: Serializer for updating an existing MenuItem.
@@ -3778,6 +4998,80 @@ components:
       required:
       - content
       - title
+    PostCreateProductRequestRequest:
+      type: object
+      description: Serializer for creating a new product.
+      properties:
+        slug:
+          type: string
+          minLength: 1
+          description: Unique URL slug for the product
+          maxLength: 255
+        name:
+          type: string
+          minLength: 1
+          description: Product name
+          maxLength: 255
+        lang:
+          type: string
+          minLength: 1
+          default: en
+          description: Language code (e.g., 'en', 'id')
+          maxLength: 10
+        model:
+          type: string
+          description: Product model/code
+          maxLength: 100
+        size:
+          type: string
+          description: Product size specifications
+          maxLength: 100
+        description:
+          type: string
+          description: Product description
+        product_type:
+          enum:
+          - lantai
+          - dinding
+          - ''
+          type: string
+          x-spec-enum-id: 02738edb9df341ce
+          description: |-
+            Product type (lantai/dinding)
+
+            * `lantai` - Lantai
+            * `dinding` - Dinding
+        image:
+          type: string
+          format: binary
+          description: Product main image
+        gallery:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: Product gallery images
+        brochure_id:
+          type: integer
+          nullable: true
+          description: ID of associated brochure
+        meta_title:
+          type: string
+          description: SEO meta title
+          maxLength: 255
+        meta_description:
+          type: string
+          description: SEO meta description
+        meta_keywords:
+          type: string
+          description: SEO meta keywords
+        is_active:
+          type: boolean
+          description: Product active status
+      required:
+      - is_active
+      - name
+      - slug
     PostCreateSettingRequestRequest:
       type: object
       description: Serializer for creating or updating application settings
@@ -3871,6 +5165,28 @@ components:
           type: integer
         is_active:
           type: boolean
+    PostUploadProductGalleryRequestRequest:
+      type: object
+      description: Serializer for uploading product gallery images.
+      properties:
+        gallery:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: Product gallery images to upload
+      required:
+      - gallery
+    PostUploadProductImageRequestRequest:
+      type: object
+      description: Serializer for uploading product main image.
+      properties:
+        image:
+          type: string
+          format: binary
+          description: Product main image to upload
+      required:
+      - image
     PutAuthTokenRequestRequest:
       type: object
       description: User token refresh request schema.
@@ -3930,6 +5246,75 @@ components:
         is_active:
           type: boolean
           description: Whether the page is active and visible to public.
+    PutUpdateProductRequestRequest:
+      type: object
+      description: Serializer for updating an existing product.
+      properties:
+        slug:
+          type: string
+          minLength: 1
+          description: Unique URL slug for the product
+          maxLength: 255
+        name:
+          type: string
+          minLength: 1
+          description: Product name
+          maxLength: 255
+        lang:
+          type: string
+          minLength: 1
+          description: Language code (e.g., 'en', 'id')
+          maxLength: 10
+        model:
+          type: string
+          description: Product model/code
+          maxLength: 100
+        size:
+          type: string
+          description: Product size specifications
+          maxLength: 100
+        description:
+          type: string
+          description: Product description
+        product_type:
+          enum:
+          - lantai
+          - dinding
+          - ''
+          type: string
+          x-spec-enum-id: 02738edb9df341ce
+          description: |-
+            Product type (lantai/dinding)
+
+            * `lantai` - Lantai
+            * `dinding` - Dinding
+        image:
+          type: string
+          format: binary
+          description: Product main image
+        gallery:
+          type: array
+          items:
+            type: string
+            format: binary
+          description: Product gallery images
+        brochure_id:
+          type: integer
+          nullable: true
+          description: ID of associated brochure
+        meta_title:
+          type: string
+          description: SEO meta title
+          maxLength: 255
+        meta_description:
+          type: string
+          description: SEO meta description
+        meta_keywords:
+          type: string
+          description: SEO meta keywords
+        is_active:
+          type: boolean
+          description: Product active status
   securitySchemes:
     BearerAuth:
       type: http
@@ -3955,5 +5340,7 @@ tags:
   description: Application subscriber management
 - name: Internal / Page
   description: Application page management
+- name: Internal / Product
+  description: Application product management
 - name: Public / Subscriber
   description: Application subscriber management
