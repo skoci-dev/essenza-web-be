@@ -206,6 +206,10 @@ SPECTACULAR_SETTINGS = {
             "name": "Internal / Page",
             "description": "Application page management",
         },
+        {
+            "name": "Internal / Product",
+            "description": "Application product management",
+        },
         # Public API Tags
         {
             "name": "Public / Subscriber",
