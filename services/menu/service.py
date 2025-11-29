@@ -1,6 +1,9 @@
+from copy import deepcopy
 from typing import Tuple
 from django.db.models.manager import BaseManager
-from core.service import BaseService
+
+from core.enums import ActionType
+from core.service import BaseService, required_context
 from core.models import Menu, MenuItem
 
 
@@ -11,6 +14,11 @@ class MenuService(BaseService):
         """Create a new menu."""
         try:
             menu = Menu.objects.create(**data)
+            self.log_entity_change(
+                self.ctx,
+                instance=menu,
+                action=ActionType.CREATE,
+            )
             return menu, None
         except Exception as e:
             return Menu(), e
@@ -29,26 +37,41 @@ class MenuService(BaseService):
         except Exception as e:
             return Menu(), e
 
+    @required_context
     def update_specific_menu(
         self, id: int, data: dict
     ) -> Tuple[Menu, Exception | None]:
         """Update a specific menu by its ID."""
         try:
             menu = Menu.objects.get(id=id)
+            old_instance = deepcopy(menu)
             for key, value in data.items():
                 setattr(menu, key, value)
             menu.save()
+            self.log_entity_change(
+                self.ctx,
+                instance=menu,
+                old_instance=old_instance,
+                action=ActionType.UPDATE,
+            )
             return menu, None
         except Menu.DoesNotExist:
             return Menu(), Exception(f"Menu with id '{id}' does not exist.")
         except Exception as e:
             return Menu(), e
 
+    @required_context
     def delete_specific_menu(self, id: int) -> Exception | None:
         """Delete a specific menu by its ID."""
         try:
             menu = Menu.objects.get(id=id)
+            old_instance = deepcopy(menu)
             menu.delete()
+            self.log_entity_change(
+                self.ctx,
+                instance=old_instance,
+                action=ActionType.DELETE,
+            )
             return None
         except Menu.DoesNotExist:
             return Exception(f"Menu with id '{id}' does not exist.")
