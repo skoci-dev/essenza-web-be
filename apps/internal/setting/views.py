@@ -24,7 +24,9 @@ class SettingsViewSet(BaseViewSet):
         """
         Create new application settings
         """
-        setting, error = self._setting_service.create_setting(**validated_data)
+        setting, error = self._setting_service.use_context(request).create_setting(
+            **validated_data
+        )
         if error:
             return api_response(request).error(message=str(error))
 
@@ -68,9 +70,9 @@ class SettingsViewSet(BaseViewSet):
         """
         Update a specific setting by its slug
         """
-        setting, error = self._setting_service.update_setting_by_slug(
-            slug, **validated_data
-        )
+        setting, error = self._setting_service.use_context(
+            request
+        ).update_setting_by_slug(slug, **validated_data)
         if error:
             return api_response(request).error(message=str(error))
 
@@ -85,7 +87,7 @@ class SettingsViewSet(BaseViewSet):
         """
         Delete a specific setting by its slug
         """
-        error = self._setting_service.delete_setting_by_slug(slug)
+        error = self._setting_service.use_context(request).delete_setting_by_slug(slug)
         if error:
             return api_response(request).error(message=str(error))
         return api_response(request).success(message="Setting deleted successfully")
