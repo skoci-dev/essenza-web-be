@@ -1,0 +1,135 @@
+[Unit]
+Description=Essenza Django Backend Application
+Documentation=https://docs.djangoproject.com/
+# Wants: Weak dependency - service will start even if target fails
+Wants=network.target
+# After: Start order dependency - wait for network before starting
+After=network.target
+# Database dependencies (uncomment if MySQL runs on same server):
+# After=network.target mysql.service
+# Requires: Strong dependency - service fails if dependency fails
+# Requires=mysql.service
+
+[Service]
+# User Configuration
+# User/Group: Run service as dedicated user for security isolation
+User=django
+Group=django
+# WorkingDirectory: Sets current directory for the process (like 'cd' command)
+WorkingDirectory=/opt/django/essenza-backend
+
+# Environment Configuration
+# DJANGO_SETTINGS_MODULE: Specifies Django settings module to use
+Environment=DJANGO_SETTINGS_MODULE=config.settings.prod
+# PYTHONUNBUFFERED: Force Python stdout/stderr to be unbuffered (better logging)
+Environment=PYTHONUNBUFFERED=1
+# EnvironmentFile: Load additional env vars from file (- prefix ignores missing file)
+EnvironmentFile=-/etc/essenza/backend.env
+
+# Process Configuration
+# Type=notify: Service will send notification when ready (requires notify support)
+Type=notify
+ExecStart=/opt/django/essenza-backend/venv/bin/gunicorn \
+    --name essenza-backend \
+    # Bind to Unix socket (for nginx proxy) and TCP (for direct access)
+    --bind unix:/run/essenza/backend.sock \
+    --bind 0.0.0.0:8000 \
+    # Workers: 'auto' = (CPU cores * 2) + 1, optimal for CPU-bound tasks
+    --workers auto \
+    # Worker class: 'sync' for CPU-bound, 'gevent'/'eventlet' for I/O-bound
+    --worker-class sync \
+    # Max simultaneous connections per worker (only for async workers)
+    --worker-connections 1000 \
+    # Restart worker after N requests (prevents memory leaks)
+    --max-requests 1000 \
+    # Randomize max-requests to avoid thundering herd
+    --max-requests-jitter 100 \
+    # Request timeout (30s = good balance for web apps)
+    --timeout 30 \
+    # Keep-alive timeout for HTTP connections
+    --keep-alive 2 \
+    # Preload app code before forking workers (better memory usage)
+    --preload \
+    # Inherit stdio from parent process (systemd)
+    --enable-stdio-inheritance \
+    # Logging: info level, stdout/stderr for systemd journal
+    --log-level info \
+    --access-logfile - \
+    --error-logfile - \
+    # Use gunicorn config file for additional settings
+    --config /opt/django/essenza-backend/gunicorn.conf.py \
+    config.wsgi:application
+
+# Restart and Recovery Configuration
+# Restart=always: Always restart on failure (except clean exit)
+Restart=always
+# RestartSec: Wait 10s before restarting (prevents rapid restart loops)
+RestartSec=10
+# StartLimitInterval: Time window for counting restart attempts (5 minutes)
+StartLimitInterval=300
+# StartLimitBurst: Max restart attempts within interval (5 attempts)
+StartLimitBurst=5
+
+# Performance and Resource Limits
+# LimitNOFILE: Max open file descriptors (default 1024 often too low for web apps)
+LimitNOFILE=65536
+# LimitNPROC: Max processes/threads (covers gunicorn workers + threads)
+LimitNPROC=32768
+# MemoryHigh: Soft memory limit - throttle when exceeded (1GB)
+MemoryHigh=1G
+# MemoryMax: Hard memory limit - kill process when exceeded (2GB)
+MemoryMax=2G
+# CPUQuota: CPU usage limit (75% = 0.75 cores, prevents resource hogging)
+CPUQuota=75%
+
+# Security Configuration (systemd sandboxing)
+# NoNewPrivileges: Prevent privilege escalation
+NoNewPrivileges=true
+# PrivateTmp: Isolate /tmp directory
+PrivateTmp=true
+# ProtectSystem: Make system directories read-only (strict = most restrictive)
+ProtectSystem=strict
+# ProtectHome: Hide user home directories
+ProtectHome=true
+# ReadWritePaths: Whitelist specific paths for write access
+ReadWritePaths=/opt/django/essenza-backend/logs /opt/django/essenza-backend/media /var/log/essenza /run/essenza
+# RuntimeDirectory: Create /run/essenza with proper permissions
+RuntimeDirectory=essenza
+RuntimeDirectoryMode=0755
+# StateDirectory: Create /var/lib/essenza for persistent state
+StateDirectory=essenza
+StateDirectoryMode=0750
+# LogsDirectory: Create /var/log/essenza with proper permissions
+LogsDirectory=essenza
+LogsDirectoryMode=0750
+
+# Process Management
+# KillMode=mixed: Send SIGTERM to main process, SIGKILL to remaining processes
+KillMode=mixed
+# KillSignal: Signal for graceful shutdown (SIGTERM allows cleanup)
+KillSignal=SIGTERM
+# TimeoutStartSec: Max time to wait for service startup (5 minutes)
+TimeoutStartSec=300
+# TimeoutStopSec: Max time to wait for graceful shutdown (1 minute)
+TimeoutStopSec=60
+# TimeoutSec: Overall timeout (deprecated, use TimeoutStartSec/TimeoutStopSec)
+TimeoutSec=300
+
+# Health Check Configuration (requires systemd 236+)
+# ExecStartPost: Commands to run after main process starts
+# Sleep 10s to allow service to fully initialize
+ExecStartPost=/bin/sleep 10
+# Health check: curl to health endpoint, fail if non-200 response
+ExecStartPost=/bin/bash -c 'curl -f http://127.0.0.1:8000/health || exit 1'
+
+# Cleanup
+# ExecStopPost: Commands to run after main process stops
+# Remove Unix socket file (in case it wasn't cleaned up properly)
+ExecStopPost=/bin/rm -f /run/essenza/backend.sock
+
+[Install]
+# WantedBy: Target that should pull in this service when enabled
+# multi-user.target = non-graphical system with network (runlevel 3)
+WantedBy=multi-user.target
+# Alias: Alternative name for this service
+Alias=django-backend.service
