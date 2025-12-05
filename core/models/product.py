@@ -9,8 +9,6 @@ class Product(TimeStampedModel, FileUploadModel):
     slug: models.CharField = models.CharField(max_length=255, unique=True)
     name: models.CharField = models.CharField(max_length=255)
     lang: models.CharField = models.CharField(max_length=10, default="en")
-    model: models.CharField = models.CharField(max_length=100, blank=True)
-    size: models.CharField = models.CharField(max_length=100, blank=True)
     description: models.TextField = models.TextField(blank=True)
     product_type: models.CharField = models.CharField(
         max_length=20, choices=ProductType.choices, blank=True
