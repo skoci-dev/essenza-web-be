@@ -124,8 +124,6 @@ class ProductService(BaseService):
 
             if filters.product_type:
                 filter_conditions &= Q(product_type=filters.product_type)
-            if filters.lang:
-                filter_conditions &= Q(lang=filters.lang)
             if filters.search:
                 search_q = (
                     Q(name__icontains=filters.search)

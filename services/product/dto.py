@@ -14,9 +14,6 @@ class CreateProductDTO(BaseDTO):
 
     slug: str
     name: str
-    lang: str = field(default="en")
-    model: str | None = field(default=None)
-    size: str | None = field(default=None)
     description: str | None = field(default=None)
     product_type: str | None = field(default=None)
     image: InMemoryUploadedFile | str | None = field(default=None)
@@ -34,9 +31,6 @@ class UpdateProductDTO(BaseDTO):
 
     slug: str | None = field(default=None)
     name: str | None = field(default=None)
-    lang: str | None = field(default=None)
-    model: str | None = field(default=None)
-    size: str | None = field(default=None)
     description: str | None = field(default=None)
     product_type: str | None = field(default=None)
     image: InMemoryUploadedFile | str | None = field(default=None)
@@ -74,6 +68,5 @@ class ProductFilterDTO(BaseDTO):
     """DTO for filtering products."""
 
     product_type: str | None = field(default=None)
-    lang: str | None = field(default=None)
     search: str | None = field(default=None)
     is_active: bool | None = field(default=None)

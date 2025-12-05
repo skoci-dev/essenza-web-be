@@ -172,12 +172,6 @@ class ProductAPI:
                     enum=["lantai", "dinding"],
                 ),
                 OpenApiParameter(
-                    name="lang",
-                    description="Filter by language code",
-                    required=False,
-                    type=OpenApiTypes.STR,
-                ),
-                OpenApiParameter(
                     name="search",
                     description="Search in name, description, and model",
                     required=False,
