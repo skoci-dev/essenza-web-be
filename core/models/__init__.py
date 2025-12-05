@@ -13,24 +13,30 @@ from .social_media import SocialMedia
 from .contact import Subscriber, ContactMessage
 from .user import User
 from .activity_log import ActivityLog
+from .specification import Specification
+from .product_variant import ProductVariant
+from .product_specification import ProductSpecification
 
 __all__ = [
-    'TimeStampedModel',
-    'BaseModel',
-    'Setting',
-    'Banner',
-    'Page',
-    'Brochure',
-    'Product',
-    'Distributor',
-    'Store',
-    'Project',
-    'Article',
-    'Menu',
-    'MenuItem',
-    'SocialMedia',
-    'Subscriber',
-    'ContactMessage',
-    'User',
-    'ActivityLog',
+    "TimeStampedModel",
+    "BaseModel",
+    "Setting",
+    "Banner",
+    "Page",
+    "Brochure",
+    "Product",
+    "Distributor",
+    "Store",
+    "Project",
+    "Article",
+    "Menu",
+    "MenuItem",
+    "SocialMedia",
+    "Subscriber",
+    "ContactMessage",
+    "User",
+    "ActivityLog",
+    "Specification",
+    "ProductVariant",
+    "ProductSpecification",
 ]
