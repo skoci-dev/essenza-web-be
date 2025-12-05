@@ -52,18 +52,6 @@ class PostCreateProductRequest(serializers.Serializer):
         max_length=255, help_text="Unique URL slug for the product"
     )
     name = serializers.CharField(max_length=255, help_text="Product name")
-    lang = serializers.CharField(
-        max_length=10, default="en", help_text="Language code (e.g., 'en', 'id')"
-    )
-    model = serializers.CharField(
-        max_length=100, allow_blank=True, required=False, help_text="Product model/code"
-    )
-    size = serializers.CharField(
-        max_length=100,
-        allow_blank=True,
-        required=False,
-        help_text="Product size specifications",
-    )
     description = serializers.CharField(
         allow_blank=True, required=False, help_text="Product description"
     )
@@ -121,18 +109,6 @@ class PutUpdateProductRequest(serializers.Serializer):
     )
     name = serializers.CharField(
         max_length=255, required=False, help_text="Product name"
-    )
-    lang = serializers.CharField(
-        max_length=10, required=False, help_text="Language code (e.g., 'en', 'id')"
-    )
-    model = serializers.CharField(
-        max_length=100, allow_blank=True, required=False, help_text="Product model/code"
-    )
-    size = serializers.CharField(
-        max_length=100,
-        allow_blank=True,
-        required=False,
-        help_text="Product size specifications",
     )
     description = serializers.CharField(
         allow_blank=True, required=False, help_text="Product description"

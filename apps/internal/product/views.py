@@ -66,7 +66,6 @@ class ProductViewSet(BaseViewSet):
             # Extract filter parameters
             filter_data = {
                 "product_type": request.GET.get("type"),
-                "lang": request.GET.get("lang"),
                 "search": request.GET.get("search"),
                 "is_active": request.GET.get("is_active"),
             }
