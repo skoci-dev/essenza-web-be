@@ -246,6 +246,10 @@ SPECTACULAR_SETTINGS = {
             "name": "Internal / Users",
             "description": "Application user management",
         },
+        {
+            "name": "Internal / System",
+            "description": "Application system management",
+        },
         # Public API Tags
         {
             "name": "Public / Subscriber",

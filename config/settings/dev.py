@@ -80,10 +80,15 @@ SECURE_BROWSER_XSS_FILTER = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
 
-# Cache configuration for development (using dummy cache)
+# Cache configuration for development (using local memory cache)
 CACHES = {
     "default": {
-        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
+        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+        "LOCATION": "unique-snowflake",
+        "TIMEOUT": 300,  # 5 minutes default
+        "OPTIONS": {
+            "MAX_ENTRIES": 1000,
+        },
     }
 }
 
@@ -189,7 +194,9 @@ RECAPTCHA_V2_SECRET_KEY = os.environ.get("RECAPTCHA_V2_SECRET_KEY", "") or ""
 RECAPTCHA_V3_SECRET_KEY = os.environ.get("RECAPTCHA_V3_SECRET_KEY", "") or ""
 
 # Force reCAPTCHA verification (set to True to test real CAPTCHA in dev)
-FORCE_RECAPTCHA_VERIFICATION = os.environ.get("FORCE_RECAPTCHA_VERIFICATION", "True").lower() == "true"
+FORCE_RECAPTCHA_VERIFICATION = (
+    os.environ.get("FORCE_RECAPTCHA_VERIFICATION", "True").lower() == "true"
+)
 
 # Ensure Django environment is set correctly
 DJANGO_ENV = "development"
