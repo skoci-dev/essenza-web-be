@@ -253,11 +253,15 @@ SPECTACULAR_SETTINGS = {
         # Public API Tags
         {
             "name": "Public / Subscriber",
-            "description": "Application subscriber management",
+            "description": "Application public subscriber access",
         },
         {
             "name": "Public / Contact Messages",
-            "description": "Application contact message management",
+            "description": "Application public contact message access",
+        },
+        {
+            "name": "Public / Articles",
+            "description": "Application public article access",
         },
     ],
 }

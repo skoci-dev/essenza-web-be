@@ -33,7 +33,7 @@ class ArticleViewSet(BaseViewSet):
     ) -> Response:
         """Create a new article."""
         try:
-            article, error = self._article_service.create_article(
+            article, error = self._article_service.use_context(request).create_article(
                 data=dto.CreateArticleDTO(**validated_data), user=request.user
             )
             if error:
@@ -70,7 +70,7 @@ class ArticleViewSet(BaseViewSet):
             page = self._article_service.get_paginated_articles(
                 str_page_number=page_number,
                 str_page_size=page_size,
-                filters=filters or None,
+                filters=dto.ArticleFilterDTO(**filters) if filters else None,
             )
 
             return api_response(request).paginated(
@@ -124,7 +124,9 @@ class ArticleViewSet(BaseViewSet):
     ) -> Response:
         """Update a specific article by its ID."""
         try:
-            article, error = self._article_service.update_specific_article(
+            article, error = self._article_service.use_context(
+                request
+            ).update_specific_article(
                 pk=pk, data=dto.UpdateArticleDTO(**validated_data)
             )
             if error:
@@ -143,7 +145,9 @@ class ArticleViewSet(BaseViewSet):
     def delete_specific_article(self, request: Request, pk: int) -> Response:
         """Delete a specific article by its ID."""
         try:
-            error = self._article_service.delete_specific_article(pk=pk)
+            error = self._article_service.use_context(request).delete_specific_article(
+                pk=pk
+            )
             if error:
                 return api_response(request).error(message=str(error))
 
@@ -162,7 +166,9 @@ class ArticleViewSet(BaseViewSet):
     ) -> Response:
         """Toggle article active status."""
         try:
-            article, error = self._article_service.toggle_article_status(
+            article, error = self._article_service.use_context(
+                request
+            ).toggle_article_status(
                 pk=pk, data=dto.ToggleArticleStatusDTO(**validated_data)
             )
             if error:
@@ -192,7 +198,7 @@ class ArticleViewSet(BaseViewSet):
 
                 validated_data["published_at"] = timezone.now()
 
-            article, error = self._article_service.publish_article(
+            article, error = self._article_service.use_context(request).publish_article(
                 pk=pk, data=dto.PublishArticleDTO(**validated_data)
             )
             if error:
@@ -238,9 +244,9 @@ class ArticleViewSet(BaseViewSet):
                     message="File size too large. Maximum size is 5MB."
                 )
 
-            article, error = self._article_service.upload_thumbnail(
-                pk=pk, thumbnail_file=thumbnail_file
-            )
+            article, error = self._article_service.use_context(
+                request
+            ).upload_thumbnail(pk=pk, thumbnail_file=thumbnail_file)
             if error:
                 return api_response(request).error(message=str(error))
 

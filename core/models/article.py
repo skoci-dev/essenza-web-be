@@ -23,6 +23,11 @@ class Article(TimeStampedModel, FileUploadModel):
     class Meta:
         ordering: list[str] = ["-created_at"]
         db_table: str = "articles"
+        indexes = [
+            models.Index(fields=["title"], name="idx_article_title"),
+            models.Index(fields=["slug"], name="idx_article_slug"),
+            models.Index(fields=["published_at"], name="idx_article_published"),
+        ]
 
     def __str__(self) -> str:
         return f"{self.id}: {self.title}"
