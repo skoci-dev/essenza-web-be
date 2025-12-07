@@ -48,3 +48,14 @@ class PublishArticleDTO(BaseDTO):
     """DTO for publishing/unpublishing an article."""
 
     published_at: datetime | None = field(default=None)
+
+
+@dataclass
+class ArticleFilterDTO(BaseDTO):
+    """DTO for filtering articles."""
+
+    search: str | None = field(default=None)
+    is_active: bool | None = field(default=None)
+    tags: str | None = field(default=None)
+    author: str | None = field(default=None)
+    fulltext_search: str | None = field(default=None)
