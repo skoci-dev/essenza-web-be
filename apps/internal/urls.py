@@ -20,4 +20,5 @@ urlpatterns = [
     path("/v1/specifications", include("apps.internal.specification.urls")),
     path("/v1/product-variants", include("apps.internal.product_variant.urls")),
     path("/v1/users", include("apps.internal.user.urls")),
+    path("/v1/system", include("apps.internal.system.urls")),
 ]
