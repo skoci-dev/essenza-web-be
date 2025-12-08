@@ -3,6 +3,7 @@ Project Service Module
 Handles all business logic for project management operations.
 """
 
+from copy import deepcopy
 import logging
 import os
 from typing import Tuple, List, Optional, Sequence
@@ -14,7 +15,8 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
-from core.service import BaseService
+from core.enums import ActionType
+from core.service import BaseService, required_context
 from core.models import Project
 from . import dto
 
@@ -42,6 +44,7 @@ class ProjectService(BaseService):
             queryset = queryset.exclude(id=exclude_id)
         return not queryset.exists()
 
+    @required_context
     def create_project(
         self, data: dto.CreateProjectDTO
     ) -> Tuple[Project, Optional[Exception]]:
@@ -74,6 +77,13 @@ class ProjectService(BaseService):
                 )
 
             project = Project.objects.create(**project_data)
+
+            self.log_entity_change(
+                self.ctx,
+                project,
+                action=ActionType.CREATE,
+                description=f"Project '{project.title}' created.",
+            )
             logger.info(f"Project created successfully with id {project.id}")
             return project, None
 
@@ -172,6 +182,7 @@ class ProjectService(BaseService):
             )
             return Project(), e
 
+    @required_context
     def update_specific_project(
         self, pk: int, data: dto.UpdateProjectDTO
     ) -> Tuple[Project, Optional[Exception]]:
@@ -193,6 +204,7 @@ class ProjectService(BaseService):
             logger.error(f"Error updating project {pk}: {str(e)}", exc_info=True)
             return Project(), e
 
+    @required_context
     def delete_specific_project(self, pk: int) -> Optional[Exception]:
         """
         Delete a specific project and its associated files.
@@ -213,6 +225,7 @@ class ProjectService(BaseService):
             logger.error(f"Error deleting project {pk}: {str(e)}", exc_info=True)
             return e
 
+    @required_context
     def toggle_project_status(
         self, pk: int, data: dto.ToggleProjectStatusDTO
     ) -> Tuple[Project, Optional[Exception]]:
@@ -234,6 +247,7 @@ class ProjectService(BaseService):
             logger.error(f"Error toggling project {pk} status: {str(e)}", exc_info=True)
             return Project(), e
 
+    @required_context
     def update_project_image(
         self, pk: int, data: dto.UpdateProjectImageDTO
     ) -> Tuple[Project, Optional[Exception]]:
@@ -255,6 +269,7 @@ class ProjectService(BaseService):
             logger.error(f"Error updating project {pk} image: {str(e)}", exc_info=True)
             return Project(), e
 
+    @required_context
     def update_project_gallery(
         self, pk: int, data: dto.UpdateProjectGalleryDTO
     ) -> Tuple[Project, Optional[Exception]]:
@@ -278,6 +293,7 @@ class ProjectService(BaseService):
             )
             return Project(), e
 
+    @required_context
     def delete_project_gallery_image(
         self, pk: int, index: int
     ) -> Tuple[Project, Optional[Exception]]:
@@ -438,6 +454,7 @@ class ProjectService(BaseService):
         logger.info(f"Project {pk} {success_message}")
         return project, None
 
+    @required_context
     def _delete_project_with_cleanup(self, pk: int) -> None:
         """
         Delete project and clean up associated files.
@@ -457,9 +474,17 @@ class ProjectService(BaseService):
             self._cleanup_old_gallery_images(project.gallery)
 
         project.delete()
+
+        self.log_entity_change(
+            self.ctx,
+            project,
+            action=ActionType.DELETE,
+            description=f"Project '{project.title}' deleted.",
+        )
         logger.info(f"Project {pk} deleted successfully")
         return None
 
+    @required_context
     def _update_project_with_data_handling(
         self, pk: int, data: dto.UpdateProjectDTO
     ) -> Tuple[Project, None]:
@@ -474,6 +499,7 @@ class ProjectService(BaseService):
             Tuple containing the updated project and None
         """
         project = Project.objects.get(id=pk)
+        old_instance = deepcopy(project)
 
         # Validate slug uniqueness if slug is being updated
         if data.slug and not self.validate_slug_uniqueness(data.slug, exclude_id=pk):
@@ -498,9 +524,17 @@ class ProjectService(BaseService):
         self._update_project_fields(project, update_data)
         project.save()
 
+        self.log_entity_change(
+            self.ctx,
+            project,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=f"Project '{project.title}' updated.",
+        )
         logger.info(f"Project {pk} updated successfully")
         return project, None
 
+    @required_context
     def _toggle_project_status_with_logging(
         self, pk: int, data: dto.ToggleProjectStatusDTO
     ) -> Tuple[Project, None]:
@@ -515,13 +549,23 @@ class ProjectService(BaseService):
             Tuple containing the updated project and None
         """
         project = Project.objects.get(id=pk)
+        old_instance = deepcopy(project)
+
         project.is_active = data.is_active
         project.save(update_fields=["is_active", "updated_at"])
 
+        self.log_entity_change(
+            self.ctx,
+            project,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=f"Project '{project.title}' status toggled.",
+        )
         status_text = "activated" if data.is_active else "deactivated"
         logger.info(f"Project {pk} {status_text} successfully")
         return project, None
 
+    @required_context
     def _update_project_image_with_cleanup(
         self, pk: int, data: dto.UpdateProjectImageDTO
     ) -> Tuple[Project, None]:
@@ -536,6 +580,7 @@ class ProjectService(BaseService):
             Tuple containing the updated project and None
         """
         project = Project.objects.get(id=pk)
+        old_instance = deepcopy(project)
 
         # Clean up old image
         if project.image:
@@ -543,10 +588,20 @@ class ProjectService(BaseService):
 
         # Save new image
         project.image.save(data.image.name, data.image, save=False)
-        return self._save_and_log_success(
+        updated_project, error = self._save_and_log_success(
             project, "image", pk, "main image updated successfully"
         )
 
+        self.log_entity_change(
+            self.ctx,
+            updated_project,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=f"Project '{updated_project.title}' main image updated.",
+        )
+        return updated_project, error
+
+    @required_context
     def _update_project_gallery_with_cleanup(
         self, pk: int, data: dto.UpdateProjectGalleryDTO
     ) -> Tuple[Project, None]:
@@ -561,6 +616,7 @@ class ProjectService(BaseService):
             Tuple containing the updated project and None
         """
         project = Project.objects.get(id=pk)
+        old_instance = deepcopy(project)
 
         # Clean up old gallery images
         if project.gallery:
@@ -568,10 +624,21 @@ class ProjectService(BaseService):
 
         # Save new gallery images
         project.gallery = self._process_gallery_images(data.gallery, project.slug)
-        return self._save_and_log_success(
+        updated_project, error = self._save_and_log_success(
             project, "gallery", pk, "gallery updated successfully"
         )
 
+        self.log_entity_change(
+            self.ctx,
+            updated_project,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=f"Project '{updated_project.title}' gallery updated.",
+        )
+
+        return updated_project, error
+
+    @required_context
     def _delete_gallery_image_by_index(
         self, pk: int, index: int
     ) -> Tuple[Project, None]:
@@ -589,6 +656,7 @@ class ProjectService(BaseService):
             Exception: If gallery image at index does not exist
         """
         project = Project.objects.get(id=pk)
+        old_instance = deepcopy(project)
 
         if not project.gallery or index >= len(project.gallery) or index < 0:
             error_msg = (
@@ -604,6 +672,13 @@ class ProjectService(BaseService):
         project.gallery = [img for i, img in enumerate(project.gallery) if i != index]
         project.save(update_fields=["gallery", "updated_at"])
 
+        self.log_entity_change(
+            self.ctx,
+            project,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=f"Gallery image at index {index} deleted from project '{project.title}'.",
+        )
         logger.info(f"Gallery image at index {index} deleted from project {pk}")
         return project, None
 
