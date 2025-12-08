@@ -622,4 +622,4 @@ class ProjectService(BaseService):
         """
         error_msg = f"{prefix}{identifier}' does not exist."
         logger.warning(error_msg)
-        return Project(), ValidationError(error_msg)
+        return Project(), Exception(error_msg)
