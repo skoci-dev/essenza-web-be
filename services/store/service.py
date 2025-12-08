@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Optional, Tuple
 import logging
 
@@ -6,7 +7,8 @@ from django.core.paginator import Page
 from django.db import transaction
 from django.core.exceptions import ValidationError
 
-from core.service import BaseService
+from core.enums import ActionType
+from core.service import BaseService, required_context
 from core.models import Store
 
 from . import dto
@@ -18,6 +20,7 @@ logger = logging.getLogger(__name__)
 class StoreService(BaseService):
     """Service class for managing stores."""
 
+    @required_context
     def create_store(
         self, data: dto.CreateStoreDTO
     ) -> Tuple[Store, Optional[Exception]]:
@@ -26,6 +29,13 @@ class StoreService(BaseService):
             with transaction.atomic():
                 self._validate_email_uniqueness(data.email)
                 store = Store.objects.create(**data.to_dict())
+
+                self.log_entity_change(
+                    self.ctx,
+                    store,
+                    action=ActionType.CREATE,
+                    description=f"Store created with ID: {store.id}",
+                )
                 logger.info(f"Store created successfully with ID: {store.id}")
                 return store, None
         except (ValueError, ValidationError) as e:
@@ -56,6 +66,7 @@ class StoreService(BaseService):
             logger.error(f"Error retrieving store with id '{pk}': {e}")
             return Store(), e
 
+    @required_context
     def update_specific_store(
         self, pk: int, data: dto.UpdateStoreDTO
     ) -> Tuple[Store, Optional[Exception]]:
@@ -63,8 +74,18 @@ class StoreService(BaseService):
         try:
             with transaction.atomic():
                 store = self._prepare_store_for_update(pk, data)
+                old_instance = deepcopy(store)
+
                 self._apply_updates(store, data)
                 store.save()
+
+                self.log_entity_change(
+                    self.ctx,
+                    store,
+                    old_instance=old_instance,
+                    action=ActionType.UPDATE,
+                    description=f"Store updated with ID: {store.id}",
+                )
                 logger.info(f"Store with ID: {store.id} updated successfully")
                 return store, None
         except Store.DoesNotExist:
@@ -76,12 +97,20 @@ class StoreService(BaseService):
             logger.error(f"Error updating store with id '{pk}': {e}")
             return Store(), e
 
+    @required_context
     def delete_specific_store(self, pk: int) -> Optional[Exception]:
         """Delete a specific store by ID with atomic transaction."""
         try:
             with transaction.atomic():
                 store = self._get_store_by_id(pk)
                 store.delete()
+
+                self.log_entity_change(
+                    self.ctx,
+                    store,
+                    action=ActionType.DELETE,
+                    description=f"Store deleted with ID: {pk}",
+                )
                 logger.info(f"Store with ID: {pk} deleted successfully")
                 return None
         except Store.DoesNotExist:
