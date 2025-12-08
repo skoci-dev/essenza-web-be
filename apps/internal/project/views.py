@@ -24,7 +24,7 @@ class ProjectViewSet(BaseViewSet):
         self, request: Request, validated_data: Dict[str, Any]
     ) -> Response:
         """Create a new project."""
-        project, error = self._project_service.create_project(
+        project, error = self._project_service.use_context(request).create_project(
             dto.CreateProjectDTO(**validated_data)
         )
 
@@ -110,9 +110,9 @@ class ProjectViewSet(BaseViewSet):
         self, request: Request, pk: int, validated_data: Dict[str, Any]
     ) -> Response:
         """Update a specific project by its ID."""
-        project, error = self._project_service.update_specific_project(
-            pk=pk, data=dto.UpdateProjectDTO(**validated_data)
-        )
+        project, error = self._project_service.use_context(
+            request
+        ).update_specific_project(pk=pk, data=dto.UpdateProjectDTO(**validated_data))
         if error:
             return api_response(request).error(message=str(error))
 
@@ -125,7 +125,9 @@ class ProjectViewSet(BaseViewSet):
     @jwt_required
     def delete_specific_project(self, request: Request, pk: int) -> Response:
         """Delete a specific project by its ID."""
-        error = self._project_service.delete_specific_project(pk=pk)
+        error = self._project_service.use_context(request).delete_specific_project(
+            pk=pk
+        )
         if error:
             return api_response(request).error(message=str(error))
 
@@ -138,7 +140,9 @@ class ProjectViewSet(BaseViewSet):
         self, request: Request, pk: int, validated_data: Dict[str, Any]
     ) -> Response:
         """Toggle project active status."""
-        project, error = self._project_service.toggle_project_status(
+        project, error = self._project_service.use_context(
+            request
+        ).toggle_project_status(
             pk=pk, data=dto.ToggleProjectStatusDTO(**validated_data)
         )
         if error:
@@ -156,9 +160,9 @@ class ProjectViewSet(BaseViewSet):
         self, request: Request, pk: int, validated_data: Dict[str, Any]
     ) -> Response:
         """Upload or update project main image."""
-        project, error = self._project_service.update_project_image(
-            pk=pk, data=dto.UpdateProjectImageDTO(**validated_data)
-        )
+        project, error = self._project_service.use_context(
+            request
+        ).update_project_image(pk=pk, data=dto.UpdateProjectImageDTO(**validated_data))
         if error:
             return api_response(request).error(message=str(error))
 
@@ -174,7 +178,9 @@ class ProjectViewSet(BaseViewSet):
         self, request: Request, pk: int, validated_data: Dict[str, Any]
     ) -> Response:
         """Upload project gallery images."""
-        project, error = self._project_service.update_project_gallery(
+        project, error = self._project_service.use_context(
+            request
+        ).update_project_gallery(
             pk=pk, data=dto.UpdateProjectGalleryDTO(**validated_data)
         )
         if error:
@@ -191,9 +197,9 @@ class ProjectViewSet(BaseViewSet):
         self, request: Request, pk: int, index: int
     ) -> Response:
         """Delete a specific image from project gallery by index."""
-        project, error = self._project_service.delete_project_gallery_image(
-            pk=pk, index=index
-        )
+        project, error = self._project_service.use_context(
+            request
+        ).delete_project_gallery_image(pk=pk, index=index)
         if error:
             return api_response(request).error(message=str(error))
 
