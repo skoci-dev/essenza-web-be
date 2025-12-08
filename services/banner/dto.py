@@ -12,6 +12,7 @@ class CreateBannerDTO(BaseDTO):
     order_no: int = field(default=0)
     is_active: bool = field(default=True)
 
+
 @dataclass
 class UpdateBannerDTO(BaseDTO):
     title: str | None = field(default=None)
@@ -19,4 +20,8 @@ class UpdateBannerDTO(BaseDTO):
     image: InMemoryUploadedFile | None = field(default=None)
     link_url: str | None = field(default=None)
     order_no: int | None = field(default=None)
+    is_active: bool | None = field(default=None)
+
+@dataclass
+class BannerFilterDTO(BaseDTO):
     is_active: bool | None = field(default=None)

@@ -1,7 +1,8 @@
 import copy
-from typing import Tuple
+from typing import Optional, Tuple
 
 from django.db.models.manager import BaseManager
+from django.db.models import Q
 from core.enums import ActionType
 from core.service import BaseService, required_context
 from core.models import Banner
@@ -35,9 +36,22 @@ class BannerService(BaseService):
         """Retrieve all banners."""
         return Banner.objects.all()
 
-    def get_paginated_banners(self, str_page_number: str, str_page_size: str) -> Page:
+    def get_paginated_banners(
+        self,
+        str_page_number: str,
+        str_page_size: str,
+        filters: Optional[dto.BannerFilterDTO] = None,
+    ) -> Page:
         """Retrieve paginated banners."""
         queryset = Banner.objects.order_by("order_no", "-created_at")
+
+        if filters:
+            q_filters = Q()
+
+            if filters.is_active is not None:
+                q_filters &= Q(is_active=filters.is_active)
+
+            queryset = queryset.filter(q_filters)
         return self.get_paginated_data(queryset, str_page_number, str_page_size)
 
     def get_specific_banner(self, pk: int) -> Tuple[Banner, Exception | None]:

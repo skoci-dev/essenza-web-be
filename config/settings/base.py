@@ -267,6 +267,10 @@ SPECTACULAR_SETTINGS = {
             "name": "Public / Social Media",
             "description": "Application public social media links access",
         },
+        {
+            "name": "Public / Banners",
+            "description": "Application public banner links access",
+        },
     ],
 }
 
