@@ -26,7 +26,7 @@ class StoreViewSet(BaseViewSet):
         self, request: Request, validated_data: Dict[str, Any]
     ) -> Response:
         """Create a new store with comprehensive validation."""
-        store, error = self._store_service.create_store(
+        store, error = self._store_service.use_context(request).create_store(
             dto.CreateStoreDTO(**validated_data)
         )
 
@@ -74,7 +74,7 @@ class StoreViewSet(BaseViewSet):
         self, request: Request, pk: int, validated_data: Dict[str, Any]
     ) -> Response:
         """Update a specific store with partial data support."""
-        store, error = self._store_service.update_specific_store(
+        store, error = self._store_service.use_context(request).update_specific_store(
             pk=pk, data=dto.UpdateStoreDTO(**validated_data)
         )
         if error:
@@ -89,7 +89,7 @@ class StoreViewSet(BaseViewSet):
     @jwt_required
     def delete_specific_store(self, request: Request, pk: int) -> Response:
         """Delete a specific store by ID with comprehensive error handling."""
-        error = self._store_service.delete_specific_store(pk=pk)
+        error = self._store_service.use_context(request).delete_specific_store(pk=pk)
         if error:
             return api_response(request).error(message=str(error))
 
