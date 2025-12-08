@@ -271,6 +271,10 @@ SPECTACULAR_SETTINGS = {
             "name": "Public / Banners",
             "description": "Application public banner links access",
         },
+        {
+            "name": "Public / Distributors",
+            "description": "Application public distributor links access",
+        },
     ],
 }
 
