@@ -46,6 +46,7 @@ class MinimalActivityLogModelSerializer(serializers.ModelSerializer):
             "description",
             "ip_address",
             "user_agent",
+            "created_at",
         ]
         read_only_fields = ["id", "created_at"]
 
