@@ -4,6 +4,7 @@ from .article import ArticlePublicAPI
 from .social_media import SocialMediaPublicAPI
 from .banner import BannerPublicAPI
 from .distributor import DistributorPublicAPI
+from .store import StorePublicAPI
 
 __all__ = [
     "SubscriberPublicAPI",
@@ -12,4 +13,5 @@ __all__ = [
     "SocialMediaPublicAPI",
     "BannerPublicAPI",
     "DistributorPublicAPI",
+    "StorePublicAPI",
 ]
