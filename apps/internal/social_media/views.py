@@ -49,7 +49,9 @@ class SocialMediaViewSet(BaseViewSet):
         """
         Create or update social media data or settings
         """
-        socmed = self._social_media_service.create_social_media(**validated_data)
+        socmed = self._social_media_service.use_context(request).create_social_media(
+            **validated_data
+        )
 
         return api_response(request).created(
             data=serializers.SocialMediaModelSerializer(socmed).data,
@@ -81,9 +83,9 @@ class SocialMediaViewSet(BaseViewSet):
         """
         Update social media data or settings
         """
-        socmed, error = self._social_media_service.update_social_media(
-            pk, **validated_data
-        )
+        socmed, error = self._social_media_service.use_context(
+            request
+        ).update_social_media(pk, **validated_data)
 
         if error:
             return api_response(request).error(message=str(error))
@@ -99,7 +101,7 @@ class SocialMediaViewSet(BaseViewSet):
         """
         Delete a specific social media entry by its primary key
         """
-        error = self._social_media_service.delete_social_media(pk)
+        error = self._social_media_service.use_context(request).delete_social_media(pk)
 
         if error:
             return api_response(request).error(message=str(error))
