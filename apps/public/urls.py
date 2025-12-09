@@ -12,4 +12,5 @@ urlpatterns = [
     path("/v1/projects", include("apps.public.project.urls")),
     path("/v1/products", include("apps.public.product.urls")),
     path("/v1/pages", include("apps.public.page.urls")),
+    path("/v1/menus", include("apps.public.menu.urls")),
 ]

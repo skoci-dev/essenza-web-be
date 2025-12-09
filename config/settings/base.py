@@ -291,6 +291,10 @@ SPECTACULAR_SETTINGS = {
             "name": "Public / Pages",
             "description": "Application public page access",
         },
+        {
+            "name": "Public / Menus",
+            "description": "Application public menu access",
+        },
     ],
 }
 
