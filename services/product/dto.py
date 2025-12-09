@@ -2,6 +2,7 @@
 Product Data Transfer Objects (DTOs)
 Contains all DTOs for product-related operations
 """
+
 from typing import List
 from django.core.files.uploadedfile import InMemoryUploadedFile
 
@@ -70,3 +71,4 @@ class ProductFilterDTO(BaseDTO):
     product_type: str | None = field(default=None)
     search: str | None = field(default=None)
     is_active: bool | None = field(default=None)
+    fulltext_search: str | None = field(default=None)
