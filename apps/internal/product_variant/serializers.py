@@ -1,4 +1,4 @@
-from typing import List
+import json
 from rest_framework import serializers
 
 from core.models import ProductVariant, ProductSpecification
@@ -22,6 +22,7 @@ class ProductSpecificationNestedSerializer(serializers.ModelSerializer):
             "id",
             "specification",
             "value",
+            "highlighted",
             "is_active",
             "created_at",
             "updated_at",
@@ -104,7 +105,7 @@ class PostCreateProductVariantRequest(serializers.Serializer):
     )
     specifications = serializers.JSONField(
         required=False,
-        help_text='JSON array of specifications with their values (optional). Example: [{"specification_slug": "color", "value": "red"}]',
+        help_text='JSON array of specifications with their values (optional). Example: [{"specification_slug": "color", "value": "red", "highlighted": true}]',
     )
 
     def validate_specifications(self, value):
@@ -114,14 +115,12 @@ class PostCreateProductVariantRequest(serializers.Serializer):
 
         # If it's a string, parse it
         if isinstance(value, str):
-            import json
-
             try:
                 value = json.loads(value)
-            except json.JSONDecodeError:
+            except json.JSONDecodeError as e:
                 raise serializers.ValidationError(
                     "Invalid JSON format for specifications"
-                )
+                ) from e
 
         # Ensure it's a list
         if not isinstance(value, list):

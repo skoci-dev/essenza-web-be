@@ -7,14 +7,10 @@ urlpatterns = [
     # Create variant for a product
     path(
         "/products/<str:product_slug>/variants",
-        ProductVariantViewSet.as_view({"post": "create_product_variant"}),
+        ProductVariantViewSet.as_view(
+            {"post": "create_product_variant", "get": "get_product_variants_by_slug"}
+        ),
         name="create_product_variant",
-    ),
-    # Get all variants by product slug
-    path(
-        "/products/<str:product_slug>/variants",
-        ProductVariantViewSet.as_view({"get": "get_product_variants_by_slug"}),
-        name="get_product_variants_by_slug",
     ),
     # Get, Update, Delete specific variant
     path(
