@@ -21,7 +21,7 @@ class PageViewSet(BaseViewSet):
     @validate_body(serializers.PostCreatePageRequest)
     def create_page(self, request: Request, validated_data) -> Response:
         """Create a new page."""
-        page, error = self._page_service.create_page(
+        page, error = self._page_service.use_context(request).create_page(
             dto.CreatePageDTO(**validated_data)
         )
 
@@ -83,7 +83,7 @@ class PageViewSet(BaseViewSet):
         self, request: Request, pk: int, validated_data
     ) -> Response:
         """Update a specific page by its ID."""
-        page, error = self._page_service.update_specific_page(
+        page, error = self._page_service.use_context(request).update_specific_page(
             pk=pk, data=dto.UpdatePageDTO(**validated_data)
         )
         if error:
@@ -98,7 +98,7 @@ class PageViewSet(BaseViewSet):
     @jwt_required
     def delete_specific_page(self, request: Request, pk: int) -> Response:
         """Delete a specific page by its ID."""
-        error = self._page_service.delete_specific_page(pk=pk)
+        error = self._page_service.use_context(request).delete_specific_page(pk=pk)
         if error:
             return api_response(request).error(message=str(error))
 
@@ -109,7 +109,7 @@ class PageViewSet(BaseViewSet):
     @validate_body(serializers.PatchTogglePageStatusRequest)
     def toggle_page_status(self, request: Request, pk: int, validated_data) -> Response:
         """Toggle page active status."""
-        page, error = self._page_service.toggle_page_status(
+        page, error = self._page_service.use_context(request).toggle_page_status(
             pk=pk, data=dto.TogglePageStatusDTO(**validated_data)
         )
         if error:
