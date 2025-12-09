@@ -19,9 +19,9 @@ class SubscriberPublicViewSet(BaseViewSet):
     @validate_body(serializers.PostCreateSubscriberSerializer)
     def create_subscriber(self, request: Request, validated_data: dict) -> Response:
         """Create a new subscriber."""
-        subscriber, error = self._subscriber_service.create_subscriber(
-            email=validated_data.get("email", "")
-        )
+        subscriber, error = self._subscriber_service.use_context(
+            request
+        ).create_subscriber(email=validated_data.get("email", ""))
         if error:
             return api_response(request).error(message=str(error))
 
