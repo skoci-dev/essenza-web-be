@@ -3,6 +3,7 @@ Product Service Module
 Handles all business logic for product management operations.
 """
 
+from copy import deepcopy
 import logging
 import os
 from typing import Tuple, List, Optional, Sequence
@@ -14,7 +15,8 @@ from django.core.files.storage import default_storage
 from django.conf import settings
 from django.core.exceptions import ValidationError
 
-from core.service import BaseService
+from core.enums.action_type import ActionType
+from core.service import BaseService, required_context
 from core.models import Product, Brochure
 from . import dto
 
@@ -54,6 +56,7 @@ class ProductService(BaseService):
         """
         return Brochure.objects.filter(id=brochure_id).exists()
 
+    @required_context
     def create_product(
         self, data: dto.CreateProductDTO
     ) -> Tuple[Product, Optional[Exception]]:
@@ -98,6 +101,13 @@ class ProductService(BaseService):
             product_data.pop("brochure_id", None)
 
             product = Product.objects.create(**product_data)
+
+            self.log_entity_change(
+                self.ctx,
+                product,
+                action=ActionType.CREATE,
+                description=f"Product '{product.name}' created.",
+            )
             logger.info(f"Product created successfully with id {product.id}")
             return product, None
 
@@ -200,6 +210,7 @@ class ProductService(BaseService):
             )
             return Product(), e
 
+    @required_context
     def update_specific_product(
         self, pk: int, data: dto.UpdateProductDTO
     ) -> Tuple[Product, Optional[Exception]]:
@@ -221,6 +232,7 @@ class ProductService(BaseService):
             logger.error(f"Error updating product {pk}: {str(e)}", exc_info=True)
             return Product(), e
 
+    @required_context
     def delete_specific_product(self, pk: int) -> Optional[Exception]:
         """
         Delete a specific product and its associated files.
@@ -241,6 +253,7 @@ class ProductService(BaseService):
             logger.error(f"Error deleting product {pk}: {str(e)}", exc_info=True)
             return e
 
+    @required_context
     def toggle_product_status(
         self, pk: int, data: dto.ToggleProductStatusDTO
     ) -> Tuple[Product, Optional[Exception]]:
@@ -262,6 +275,7 @@ class ProductService(BaseService):
             logger.error(f"Error toggling product {pk} status: {str(e)}", exc_info=True)
             return Product(), e
 
+    @required_context
     def update_product_image(
         self, pk: int, data: dto.UpdateProductImageDTO
     ) -> Tuple[Product, Optional[Exception]]:
@@ -283,6 +297,7 @@ class ProductService(BaseService):
             logger.error(f"Error updating product {pk} image: {str(e)}", exc_info=True)
             return Product(), e
 
+    @required_context
     def update_product_gallery(
         self, pk: int, data: dto.UpdateProductGalleryDTO
     ) -> Tuple[Product, Optional[Exception]]:
@@ -306,6 +321,7 @@ class ProductService(BaseService):
             )
             return Product(), e
 
+    @required_context
     def delete_product_gallery_image(
         self, pk: int, index: int
     ) -> Tuple[Product, Optional[Exception]]:
@@ -482,6 +498,7 @@ class ProductService(BaseService):
         logger.info(f"Product {pk} {success_message}")
         return product, None
 
+    @required_context
     def _delete_product_with_cleanup(self, pk: int) -> None:
         """
         Delete product and clean up associated files.
@@ -501,9 +518,17 @@ class ProductService(BaseService):
             self._cleanup_old_gallery_images(product.gallery)
 
         product.delete()
+
+        self.log_entity_change(
+            self.ctx,
+            product,
+            action=ActionType.DELETE,
+            description=f"Product '{product.name}' deleted.",
+        )
         logger.info(f"Product {pk} deleted successfully")
         return None
 
+    @required_context
     def _update_product_with_data_handling(
         self, pk: int, data: dto.UpdateProductDTO
     ) -> Tuple[Product, None]:
@@ -518,6 +543,7 @@ class ProductService(BaseService):
             Tuple containing the updated product and None
         """
         product = Product.objects.get(id=pk)
+        old_instance = deepcopy(product)
 
         # Validate slug uniqueness if slug is being updated
         if data.slug and not self.validate_slug_uniqueness(data.slug, exclude_id=pk):
@@ -554,9 +580,17 @@ class ProductService(BaseService):
         self._update_product_fields(product, update_data)
         product.save()
 
+        self.log_entity_change(
+            self.ctx,
+            product,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=f"Product '{product.name}' updated.",
+        )
         logger.info(f"Product {pk} updated successfully")
         return product, None
 
+    @required_context
     def _toggle_product_status_with_logging(
         self, pk: int, data: dto.ToggleProductStatusDTO
     ) -> Tuple[Product, None]:
@@ -571,13 +605,23 @@ class ProductService(BaseService):
             Tuple containing the updated product and None
         """
         product = Product.objects.get(id=pk)
+        old_instance = deepcopy(product)
+
         product.is_active = data.is_active
         product.save(update_fields=["is_active", "updated_at"])
 
         status_text = "activated" if data.is_active else "deactivated"
+        self.log_entity_change(
+            self.ctx,
+            product,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=(f"Product '{product.name}' has been {status_text}."),
+        )
         logger.info(f"Product {pk} {status_text} successfully")
         return product, None
 
+    @required_context
     def _update_product_image_with_cleanup(
         self, pk: int, data: dto.UpdateProductImageDTO
     ) -> Tuple[Product, None]:
@@ -592,6 +636,7 @@ class ProductService(BaseService):
             Tuple containing the updated product and None
         """
         product = Product.objects.get(id=pk)
+        old_instance = deepcopy(product)
 
         # Clean up old image
         if product.image:
@@ -599,10 +644,20 @@ class ProductService(BaseService):
 
         # Save new image
         product.image.save(data.image.name, data.image, save=False)
-        return self._save_and_log_success(
+        product, err = self._save_and_log_success(
             product, "image", pk, "main image updated successfully"
         )
 
+        self.log_entity_change(
+            self.ctx,
+            product,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=f"Product '{product.name}' image updated.",
+        )
+        return product, err
+
+    @required_context
     def _update_product_gallery_with_cleanup(
         self, pk: int, data: dto.UpdateProductGalleryDTO
     ) -> Tuple[Product, None]:
@@ -617,6 +672,7 @@ class ProductService(BaseService):
             Tuple containing the updated product and None
         """
         product = Product.objects.get(id=pk)
+        old_instance = deepcopy(product)
 
         # Clean up old gallery images
         if product.gallery:
@@ -624,10 +680,20 @@ class ProductService(BaseService):
 
         # Save new gallery images
         product.gallery = self._process_gallery_images(data.gallery, product.slug)
-        return self._save_and_log_success(
+        product, err = self._save_and_log_success(
             product, "gallery", pk, "gallery updated successfully"
         )
 
+        self.log_entity_change(
+            self.ctx,
+            product,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=f"Product '{product.name}' gallery updated.",
+        )
+        return product, err
+
+    @required_context
     def _delete_gallery_image_by_index(
         self, pk: int, index: int
     ) -> Tuple[Product, None]:
@@ -645,6 +711,7 @@ class ProductService(BaseService):
             Exception: If gallery image at index does not exist
         """
         product = Product.objects.get(id=pk)
+        old_instance = deepcopy(product)
 
         if not product.gallery or index >= len(product.gallery) or index < 0:
             error_msg = (
@@ -660,6 +727,13 @@ class ProductService(BaseService):
         product.gallery = [img for i, img in enumerate(product.gallery) if i != index]
         product.save(update_fields=["gallery", "updated_at"])
 
+        self.log_entity_change(
+            self.ctx,
+            product,
+            old_instance=old_instance,
+            action=ActionType.UPDATE,
+            description=f"Gallery image at index {index} deleted from product {pk}.",
+        )
         logger.info(f"Gallery image at index {index} deleted from product {pk}")
         return product, None
 

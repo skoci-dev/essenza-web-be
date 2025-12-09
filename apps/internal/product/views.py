@@ -35,7 +35,7 @@ class ProductViewSet(BaseViewSet):
         try:
             logger.info(f"Creating new product with slug: {validated_data.get('slug')}")
 
-            product, error = self._product_service.create_product(
+            product, error = self._product_service.use_context(request).create_product(
                 dto.CreateProductDTO(**validated_data)
             )
 
@@ -156,7 +156,9 @@ class ProductViewSet(BaseViewSet):
         try:
             logger.info(f"Updating product with ID: {pk}")
 
-            product, error = self._product_service.update_specific_product(
+            product, error = self._product_service.use_context(
+                request
+            ).update_specific_product(
                 pk=pk, data=dto.UpdateProductDTO(**validated_data)
             )
             if error:
@@ -183,7 +185,9 @@ class ProductViewSet(BaseViewSet):
         try:
             logger.info(f"Deleting product with ID: {pk}")
 
-            if error := self._product_service.delete_specific_product(pk=pk):
+            if error := self._product_service.use_context(
+                request
+            ).delete_specific_product(pk=pk):
                 logger.error(f"Error deleting product: {str(error)}")
                 return api_response(request).error(message=str(error))
 
@@ -209,7 +213,9 @@ class ProductViewSet(BaseViewSet):
         try:
             logger.info(f"Toggling status for product with ID: {pk}")
 
-            product, error = self._product_service.toggle_product_status(
+            product, error = self._product_service.use_context(
+                request
+            ).toggle_product_status(
                 pk=pk, data=dto.ToggleProductStatusDTO(**validated_data)
             )
             if error:
@@ -240,7 +246,9 @@ class ProductViewSet(BaseViewSet):
         try:
             logger.info(f"Uploading main image for product with ID: {pk}")
 
-            product, error = self._product_service.update_product_image(
+            product, error = self._product_service.use_context(
+                request
+            ).update_product_image(
                 pk=pk, data=dto.UpdateProductImageDTO(**validated_data)
             )
             if error:
@@ -270,7 +278,9 @@ class ProductViewSet(BaseViewSet):
         try:
             logger.info(f"Uploading gallery images for product with ID: {pk}")
 
-            product, error = self._product_service.update_product_gallery(
+            product, error = self._product_service.use_context(
+                request
+            ).update_product_gallery(
                 pk=pk, data=dto.UpdateProductGalleryDTO(**validated_data)
             )
             if error:
@@ -301,9 +311,9 @@ class ProductViewSet(BaseViewSet):
                 f"Deleting gallery image at index {index} for product with ID: {pk}"
             )
 
-            product, error = self._product_service.delete_product_gallery_image(
-                pk=pk, index=index
-            )
+            product, error = self._product_service.use_context(
+                request
+            ).delete_product_gallery_image(pk=pk, index=index)
             if error:
                 logger.error(f"Error deleting gallery image: {str(error)}")
                 return api_response(request).error(message=str(error))
