@@ -1,3 +1,4 @@
+from copy import deepcopy
 import logging
 from typing import Tuple, Optional
 
@@ -6,7 +7,8 @@ from django.db.models import QuerySet
 from django.utils.text import slugify
 from django.db import IntegrityError, transaction
 
-from core.service import BaseService
+from core.enums import ActionType
+from core.service import BaseService, required_context
 from core.models import Page as PageModel
 
 from . import dto
@@ -17,6 +19,7 @@ logger = logging.getLogger(__name__)
 class PageService(BaseService):
     """Service class for managing pages."""
 
+    @required_context
     def create_page(
         self, data: dto.CreatePageDTO
     ) -> Tuple[PageModel, Optional[Exception]]:
@@ -27,6 +30,13 @@ class PageService(BaseService):
                 data.slug = self._generate_slug(data.slug, data.title)
 
                 page = PageModel.objects.create(**data.to_dict())
+
+                self.log_entity_change(
+                    self.ctx,
+                    page,
+                    action=ActionType.CREATE,
+                    description=f"Page '{page.title}' created.",
+                )
                 logger.info(f"Page created successfully with ID: {page.id}")
                 return page, None
         except IntegrityError as e:
@@ -100,6 +110,7 @@ class PageService(BaseService):
             else:
                 data.slug = slugify(data.slug)
 
+    @required_context
     def update_specific_page(
         self, pk: int, data: dto.UpdatePageDTO
     ) -> Tuple[PageModel, Optional[Exception]]:
@@ -114,12 +125,14 @@ class PageService(BaseService):
             logger.error(f"Error updating page {pk}: {e}")
             return PageModel(), e
 
+    @required_context
     def _update_page_data(
         self, pk: int, data: dto.UpdatePageDTO
     ) -> Tuple[PageModel, None]:
         """Update page data with optimized field updates and transaction safety."""
         with transaction.atomic():
             page = PageModel.objects.select_for_update().get(id=pk)
+            old_instance = deepcopy(page)
 
             # Handle slug update with auto-generation
             self._handle_slug_update(data, page)
@@ -131,9 +144,18 @@ class PageService(BaseService):
                     setattr(page, key, value)
 
             page.save(update_fields=list(update_data.keys()) if update_data else None)
+
+            self.log_entity_change(
+                self.ctx,
+                page,
+                old_instance=old_instance,
+                action=ActionType.UPDATE,
+                description=f"Page '{page.title}' updated.",
+            )
             logger.info(f"Page updated successfully: {page.id}")
             return page, None
 
+    @required_context
     def delete_specific_page(self, pk: int) -> Optional[Exception]:
         """Delete a specific page by its ID with transaction safety."""
         try:
@@ -141,6 +163,13 @@ class PageService(BaseService):
                 page = PageModel.objects.select_for_update().get(id=pk)
                 page_id = page.id
                 page.delete()
+
+                self.log_entity_change(
+                    self.ctx,
+                    page,
+                    action=ActionType.DELETE,
+                    description=f"Page '{page.title}' deleted.",
+                )
                 logger.info(f"Page deleted successfully: {page_id}")
                 return None
         except PageModel.DoesNotExist:
@@ -151,6 +180,7 @@ class PageService(BaseService):
             logger.error(f"Error deleting page {pk}: {e}")
             return e
 
+    @required_context
     def toggle_page_status(
         self, pk: int, data: dto.TogglePageStatusDTO
     ) -> Tuple[PageModel, Optional[Exception]]:
@@ -158,8 +188,18 @@ class PageService(BaseService):
         try:
             with transaction.atomic():
                 page = PageModel.objects.select_for_update().get(id=pk)
+                old_instance = deepcopy(page)
+
                 page.is_active = data.is_active
                 page.save(update_fields=["is_active"])
+
+                self.log_entity_change(
+                    self.ctx,
+                    page,
+                    old_instance=old_instance,
+                    action=ActionType.UPDATE,
+                    description=f"Page '{page.title}' status toggled to {data.is_active}.",
+                )
                 logger.info(
                     f"Page status toggled successfully: {page.id} -> {data.is_active}"
                 )
