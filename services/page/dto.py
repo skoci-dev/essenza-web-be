@@ -34,3 +34,10 @@ class TogglePageStatusDTO(BaseDTO):
     """DTO for toggling page active status."""
 
     is_active: bool
+
+
+@dataclass
+class PageFilterDTO(BaseDTO):
+    """DTO for filtering pages."""
+
+    is_active: bool | None = field(default=None)

@@ -49,9 +49,18 @@ class PageService(BaseService):
         """Retrieve all pages with optimized queryset."""
         return PageModel.objects.select_related().all()
 
-    def get_paginated_pages(self, str_page_number: str, str_page_size: str) -> Page:
+    def get_paginated_pages(
+        self,
+        str_page_number: str,
+        str_page_size: str,
+        filters: dto.PageFilterDTO | None = None,
+    ) -> Page:
         """Retrieve paginated pages with optimized ordering and select_related."""
         queryset = PageModel.objects.select_related().order_by("-created_at")
+
+        if filters and filters.is_active is not None:
+            queryset = queryset.filter(is_active=filters.is_active)
+
         return self.get_paginated_data(queryset, str_page_number, str_page_size)
 
     def get_specific_page(self, pk: int) -> Tuple[PageModel, Optional[Exception]]:
