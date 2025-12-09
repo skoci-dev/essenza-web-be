@@ -8,6 +8,7 @@ from .store import StorePublicAPI
 from .project import ProjectPublicAPI
 from .product import ProductPublicAPI
 from .page import PagePublicAPI
+from .menu import MenuPublicAPI
 
 __all__ = [
     "SubscriberPublicAPI",
@@ -20,4 +21,5 @@ __all__ = [
     "ProjectPublicAPI",
     "ProductPublicAPI",
     "PagePublicAPI",
+    "MenuPublicAPI",
 ]

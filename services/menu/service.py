@@ -23,9 +23,13 @@ class MenuService(BaseService):
         except Exception as e:
             return Menu(), e
 
-    def get_menus(self) -> BaseManager[Menu]:
+    def get_menus(self, tree: bool = False) -> BaseManager[Menu]:
         """Retrieve all menus."""
-        return Menu.objects.all()
+        queryset = Menu.objects.all().prefetch_related("items")
+
+        if tree:
+            queryset = queryset.prefetch_related("items__children")
+        return queryset
 
     def get_specific_menu(self, id: int) -> Tuple[Menu, Exception | None]:
         """Retrieve a specific menu by its ID."""
