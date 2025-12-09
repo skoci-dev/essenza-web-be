@@ -1,12 +1,14 @@
 from django.core.paginator import Page
 
-from core.service import BaseService
+from core.service import BaseService, required_context
 from core.models import Subscriber
+from core.enums import ActionType
 
 
 class SubscriberService(BaseService):
     """Service class for managing subscribers."""
 
+    @required_context
     def create_subscriber(self, email: str) -> tuple[Subscriber, Exception | None]:
         """Create a new subscriber."""
         try:
@@ -16,6 +18,17 @@ class SubscriberService(BaseService):
                 )
 
             subscriber = Subscriber.objects.create(email=email)
+
+            self.log_guest_activity(
+                self.ctx,
+                ActionType.CREATE,
+                entity=subscriber._entity,
+                computed_entity=subscriber._computed_entity,
+                entity_id=subscriber.id,
+                entity_name=subscriber.email,
+                description="New subscriber created.",
+                guest_email=email,
+            )
             return subscriber, None
         except Exception as e:
             return Subscriber(), e
