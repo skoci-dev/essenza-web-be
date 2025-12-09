@@ -120,15 +120,17 @@ class ProductService(BaseService):
         queryset = Product.objects.select_related("brochure")
 
         if filters:
+            # Use full-text search if specified (overrides basic search)
+            if fulltext_search := filters.fulltext_search:
+                return self._search_with_mysql_fulltext(queryset, fulltext_search)
+
             filter_conditions = Q()
 
             if filters.product_type:
                 filter_conditions &= Q(product_type=filters.product_type)
             if filters.search:
-                search_q = (
-                    Q(name__icontains=filters.search)
-                    | Q(description__icontains=filters.search)
-                    | Q(model__icontains=filters.search)
+                search_q = Q(name__icontains=filters.search) | Q(
+                    description__icontains=filters.search
                 )
                 filter_conditions &= search_q
             if filters.is_active is not None:
@@ -661,6 +663,60 @@ class ProductService(BaseService):
         logger.info(f"Gallery image at index {index} deleted from product {pk}")
         return product, None
 
+    def _search_with_mysql_fulltext(
+        self, queryset: QuerySet[Product], query: str
+    ) -> QuerySet[Product]:
+        """
+        Perform MySQL full-text search across product and product variant fields.
+
+        Uses MySQL's MATCH...AGAINST with NATURAL LANGUAGE MODE for efficient
+        full-text searching. Searches across:
+        - Product: name, description
+        - ProductVariant: model, description
+
+        Results are ordered by relevance score and creation date.
+
+        Note: Requires FULLTEXT index on searched fields in database schema.
+
+        Args:
+            queryset: Base queryset to apply search filter on
+            query: Search term(s) to find in product content
+
+        Returns:
+            QuerySet[Product]: Filtered queryset ordered by relevance and date
+        """
+        if not query or not query.strip():
+            return queryset
+
+        # Escape single quotes for SQL safety (params handle injection prevention)
+        safe_query = query.strip().replace("'", "''")
+
+        # Subquery untuk mencari di product_variants
+        variant_subquery = """
+            SELECT DISTINCT pv.product_id
+            FROM product_variants pv
+            WHERE MATCH(pv.model, pv.description)
+            AGAINST (%s IN NATURAL LANGUAGE MODE)
+        """
+
+        return queryset.extra(
+            select={
+                "product_relevance": """
+                    MATCH(name, description)
+                    AGAINST (%s IN NATURAL LANGUAGE MODE)
+                """,
+            },
+            select_params=[safe_query],
+            where=[
+                f"""
+                MATCH(products.name, products.description)
+                AGAINST (%s IN NATURAL LANGUAGE MODE)
+                OR products.id IN ({variant_subquery})
+                """
+            ],
+            params=[safe_query, safe_query],
+        ).order_by("-product_relevance", "-created_at")
+
     def _create_product_not_found_error(
         self, prefix: str, identifier: int | str
     ) -> Tuple[Product, Exception]:
@@ -676,4 +732,4 @@ class ProductService(BaseService):
         """
         error_msg = f"{prefix}{identifier}' does not exist."
         logger.warning(error_msg)
-        return Product(), ValidationError(error_msg)
+        return Product(), Exception(error_msg)

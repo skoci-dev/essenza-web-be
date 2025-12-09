@@ -283,6 +283,10 @@ SPECTACULAR_SETTINGS = {
             "name": "Public / Projects",
             "description": "Application public project access",
         },
+        {
+            "name": "Public / Products",
+            "description": "Application public product access",
+        },
     ],
 }
 
