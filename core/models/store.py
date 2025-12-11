@@ -1,24 +1,23 @@
 from django.db import models
 from core.models._base import TimeStampedModel
+from core.enums import IndonesianCity
 
 
 class Store(TimeStampedModel):
     id = models.AutoField(primary_key=True, editable=False)
     name: models.CharField = models.CharField(max_length=255)
+    city: models.CharField = models.CharField(
+        max_length=100, choices=IndonesianCity.choices, blank=True
+    )
     address: models.TextField = models.TextField()
     phone: models.CharField = models.CharField(max_length=50, blank=True)
     email: models.CharField = models.CharField(max_length=100, blank=True)
+    gmap_link: models.CharField = models.CharField(max_length=500, blank=True)
     latitude: models.DecimalField = models.DecimalField(
-        max_digits=10,
-        decimal_places=6,
-        null=True,
-        blank=True
+        max_digits=10, decimal_places=6, null=True, blank=True
     )
     longitude: models.DecimalField = models.DecimalField(
-        max_digits=10,
-        decimal_places=6,
-        null=True,
-        blank=True
+        max_digits=10, decimal_places=6, null=True, blank=True
     )
     created_at: models.DateTimeField = models.DateTimeField(auto_now_add=True)
 
