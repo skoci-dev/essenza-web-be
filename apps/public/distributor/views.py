@@ -37,6 +37,7 @@ class DistributorPublicViewSet(BaseViewSet):
             page=page,
         )
 
+    @DistributorPublicAPI.get_available_cities_schema
     def get_available_cities(self, request: Request) -> Response:
         """Get a list of available cities with distributors."""
         cities = self._distributor_service.get_available_cities()
