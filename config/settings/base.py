@@ -207,16 +207,16 @@ SPECTACULAR_SETTINGS = {
             "description": "Application page management",
         },
         {
-            "name": "Internal / Specification",
-            "description": "Application specification master data management",
+            "name": "Internal / Product Specification Master",
+            "description": "Application product specification master data management",
+        },
+        {
+            "name": "Internal / Product Category Master",
+            "description": "Application product category master data management",
         },
         {
             "name": "Internal / Product",
             "description": "Application product management",
-        },
-        {
-            "name": "Internal / Product Variant",
-            "description": "Application product variant management",
         },
         {
             "name": "Internal / Brochure",

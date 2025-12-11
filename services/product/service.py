@@ -9,15 +9,21 @@ import os
 from typing import Tuple, List, Optional, Sequence
 from django.db.models.query import QuerySet
 from django.db.models import Q
+from django.db import transaction
 from django.core.paginator import Page
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.core.files.storage import default_storage
 from django.conf import settings
-from django.core.exceptions import ValidationError
 
 from core.enums.action_type import ActionType
-from core.service import BaseService, required_context
-from core.models import Product, Brochure
+from core.service import BaseService, required_context, ServiceException
+from core.models import (
+    Product,
+    Brochure,
+    ProductCategory,
+    Specification,
+    ProductSpecification,
+)
 from . import dto
 
 logger = logging.getLogger(__name__)
@@ -56,6 +62,18 @@ class ProductService(BaseService):
         """
         return Brochure.objects.filter(id=brochure_id).exists()
 
+    def validate_category_exists(self, category_slug: str) -> bool:
+        """
+        Validate if product category exists.
+
+        Args:
+            category_slug: The product category slug to validate
+
+        Returns:
+            True if product category exists, False otherwise
+        """
+        return ProductCategory.objects.filter(slug=category_slug).exists()
+
     @required_context
     def create_product(
         self, data: dto.CreateProductDTO
@@ -72,13 +90,13 @@ class ProductService(BaseService):
         try:
             # Validate slug uniqueness
             if data.slug and not self.validate_slug_uniqueness(data.slug):
-                return Product(), ValidationError(
+                return Product(), ServiceException(
                     "Product with this slug already exists."
                 )
 
             # Validate brochure exists if provided
             if data.brochure_id and not self.validate_brochure_exists(data.brochure_id):
-                return Product(), ValidationError(
+                return Product(), ServiceException(
                     f"Brochure with id {data.brochure_id} does not exist."
                 )
 
@@ -93,10 +111,15 @@ class ProductService(BaseService):
                 product_data["gallery"] = self._process_gallery_images(
                     data.gallery, data.slug
                 )
+            else:
+                product_data["gallery"] = []
 
             # Handle brochure relationship
             product_data["brochure"] = (
                 self._get_brochure_by_id(data.brochure_id) if data.brochure_id else None
+            )
+            product_data["category"] = (
+                self._get_category_by_slug(data.category) if data.category else None
             )
             product_data.pop("brochure_id", None)
 
@@ -248,7 +271,7 @@ class ProductService(BaseService):
         except Product.DoesNotExist:
             error_msg = f"Product with id '{pk}' does not exist."
             logger.warning(error_msg)
-            return ValidationError(error_msg)
+            return ServiceException(error_msg)
         except Exception as e:
             logger.error(f"Error deleting product {pk}: {str(e)}", exc_info=True)
             return e
@@ -386,6 +409,22 @@ class ProductService(BaseService):
             logger.warning(f"Brochure with id {brochure_id} not found")
             return None
 
+    def _get_category_by_slug(self, category_slug: str) -> Optional[ProductCategory]:
+        """
+        Retrieve product category by slug with error handling.
+
+        Args:
+            category_slug: Product category slug to retrieve
+
+        Returns:
+            ProductCategory instance or None if not found
+        """
+        try:
+            return ProductCategory.objects.get(slug=category_slug)
+        except ProductCategory.DoesNotExist:
+            logger.warning(f"Product category with slug '{category_slug}' not found")
+            return None
+
     def _update_product_fields(self, product: Product, update_data: dict) -> None:
         """
         Update product fields with provided data.
@@ -439,7 +478,7 @@ class ProductService(BaseService):
 
         except Exception as e:
             logger.error(f"Error saving product gallery image: {str(e)}", exc_info=True)
-            raise ValidationError(f"Failed to save gallery image: {str(e)}") from e
+            raise ServiceException(f"Failed to save gallery image: {str(e)}") from e
 
     def _delete_product_file(self, file_path: str) -> None:
         """
@@ -455,7 +494,9 @@ class ProductService(BaseService):
         except Exception as e:
             logger.warning(f"Error deleting product file {file_path}: {str(e)}")
 
-    def _handle_product_not_found_by_id(self, pk: int) -> Tuple[Product, Exception]:
+    def _handle_product_not_found_by_id(
+        self, pk: int
+    ) -> Tuple[Product, ServiceException]:
         """
         Handle Product.DoesNotExist exception for ID-based lookups.
 
@@ -467,7 +508,9 @@ class ProductService(BaseService):
         """
         return self._create_product_not_found_error("Product with id '", pk)
 
-    def _handle_product_not_found_by_slug(self, slug: str) -> Tuple[Product, Exception]:
+    def _handle_product_not_found_by_slug(
+        self, slug: str
+    ) -> Tuple[Product, ServiceException]:
         """
         Handle Product.DoesNotExist exception for slug-based lookups.
 
@@ -547,12 +590,17 @@ class ProductService(BaseService):
 
         # Validate slug uniqueness if slug is being updated
         if data.slug and not self.validate_slug_uniqueness(data.slug, exclude_id=pk):
-            raise ValidationError("Product with this slug already exists.")
+            raise ServiceException("Product with this slug already exists.")
 
         # Validate brochure exists if provided
         if data.brochure_id and not self.validate_brochure_exists(data.brochure_id):
-            raise ValidationError(
+            raise ServiceException(
                 f"Brochure with id {data.brochure_id} does not exist."
+            )
+
+        if data.category and not self.validate_category_exists(data.category):
+            raise ServiceException(
+                f"Product category with slug '{data.category}' does not exist."
             )
 
         update_data = data.to_dict()
@@ -573,6 +621,9 @@ class ProductService(BaseService):
         # Handle brochure relationship update
         if data.brochure_id:
             update_data["brochure"] = self._get_brochure_by_id(data.brochure_id)
+
+        if data.category:
+            update_data["category"] = self._get_category_by_slug(data.category)
 
         update_data.pop("brochure_id", None)
 
@@ -718,7 +769,7 @@ class ProductService(BaseService):
                 f"Gallery image at index {index} does not exist for product {pk}."
             )
             logger.warning(error_msg)
-            raise ValidationError(error_msg)
+            raise ServiceException(error_msg)
 
         # Delete the specific image file
         self._delete_product_file(product.gallery[index])
@@ -793,7 +844,7 @@ class ProductService(BaseService):
 
     def _create_product_not_found_error(
         self, prefix: str, identifier: int | str
-    ) -> Tuple[Product, Exception]:
+    ) -> Tuple[Product, ServiceException]:
         """
         Create a standardized product not found error with logging.
 
@@ -806,4 +857,153 @@ class ProductService(BaseService):
         """
         error_msg = f"{prefix}{identifier}' does not exist."
         logger.warning(error_msg)
-        return Product(), Exception(error_msg)
+        return Product(), ServiceException(error_msg)
+
+    @required_context
+    def add_or_update_specifications_to_product(
+        self,
+        product_id: int,
+        specifications: List[dto.CreateProductSpecificationItemDTO],
+    ) -> Tuple[Product, Optional[Exception]]:
+        """
+        Add specifications to a product.
+
+        Args:
+            product_id: ID of the product to add specifications to
+            specifications: List of specification DTOs to add
+
+        Returns:
+            Tuple containing the updated product and any error that occurred
+        """
+        try:
+            if err := self._validate_product_specifications(specifications):
+                raise err
+
+            product = Product.objects.get(id=product_id)
+
+            spec_slugs = [spec_dto.slug for spec_dto in specifications]
+            specifications_map = Specification.objects.in_bulk(
+                spec_slugs, field_name="slug"
+            )
+
+            existing_product_specs = {
+                (ps.specification.slug): ps
+                for ps in ProductSpecification.objects.filter(
+                    product=product, specification__slug__in=spec_slugs
+                ).select_related("specification")
+            }
+
+            with transaction.atomic():
+                for spec_dto in specifications:
+                    specification = specifications_map[spec_dto.slug]
+                    old_instance = existing_product_specs.get(spec_dto.slug)
+
+                    spec, created = ProductSpecification.objects.update_or_create(
+                        product=product,
+                        specification=specification,
+                        defaults={
+                            "value": spec_dto.value,
+                            "highlighted": spec_dto.highlighted,
+                        },
+                    )
+
+                    self.log_entity_change(
+                        self.ctx,
+                        spec,
+                        action=ActionType.CREATE if created else ActionType.UPDATE,
+                        old_instance=old_instance,
+                        description=(
+                            f"Specification '{specification.label}' "
+                            f"{'added to' if created else 'updated for'} product '{product.name}'."
+                        ),
+                    )
+                return product, None
+
+        except Product.DoesNotExist:
+            return Product(), ServiceException(
+                f"Product with id '{product_id}' does not exist."
+            )
+        except Exception as e:
+            logger.error(
+                f"Error adding specifications to product {product_id}: {str(e)}",
+                exc_info=True,
+            )
+            return Product(), e
+
+    def _validate_product_specifications(
+        self,
+        specifications: List[dto.CreateProductSpecificationItemDTO],
+    ) -> Optional[Exception]:
+        """
+        Validate that all specifications exist in database.
+
+        Args:
+            specifications: List of specification DTOs to validate
+
+        Returns:
+            Exception if validation fails, None otherwise
+        """
+        # Get all slugs from specifications
+        spec_slugs = [spec_dto.slug for spec_dto in specifications]
+
+        # Query all slugs in one go
+        existing_slugs = set(
+            Specification.objects.filter(slug__in=spec_slugs).values_list(
+                "slug", flat=True
+            )
+        )
+
+        # Check for missing slugs
+        for slug in spec_slugs:
+            if slug not in existing_slugs:
+                return ServiceException(
+                    f"Specification with slug '{slug}' does not exist."
+                )
+
+    @required_context
+    def remove_specifications_from_product(
+        self, product_id: int, specification_slugs: List[str]
+    ) -> Optional[Exception]:
+        """
+        Remove specifications from a product.
+
+        Args:
+            product_id: ID of the product to remove specifications from
+            specification_slugs: List of specification slugs to remove
+        Returns:
+            Exception if error occurs, None if successful
+        """
+        try:
+            product = Product.objects.get(id=product_id)
+
+            with transaction.atomic():
+                for slug in specification_slugs:
+                    try:
+                        product_spec = ProductSpecification.objects.get(
+                            product=product,
+                            specification__slug=slug,
+                        )
+                        product_spec.delete()
+
+                        self.log_entity_change(
+                            self.ctx,
+                            product_spec,
+                            action=ActionType.DELETE,
+                            description=(
+                                f"Specification '{slug}' removed from product '{product.name}'."
+                            ),
+                        )
+                    except ProductSpecification.DoesNotExist:
+                        logger.warning(
+                            f"Specification '{slug}' not found for product '{product.name}'."
+                        )
+            return None
+
+        except Product.DoesNotExist:
+            return ServiceException(f"Product with id '{product_id}' does not exist.")
+        except Exception as e:
+            logger.error(
+                f"Error removing specifications from product {product_id}: {str(e)}",
+                exc_info=True,
+            )
+            return e

@@ -23,9 +23,16 @@ logger = logging.getLogger(__name__)
 class SpecificationService(BaseService):
     """Service class for managing specification operations with comprehensive functionality."""
 
-    def get_specifications(self) -> QuerySet[Specification]:
+    def get_specifications(
+        self, is_active: Optional[bool] = None
+    ) -> QuerySet[Specification]:
         """Retrieve all specifications with optimized queryset."""
-        return Specification.objects.select_related().all()
+        queryset = Specification.objects.select_related().all()
+
+        if is_active is not None:
+            queryset = queryset.filter(is_active=is_active)
+
+        return queryset.order_by("order_number", "label", "-created_at")
 
     def get_specification_by_slug(
         self, slug: str

@@ -14,8 +14,8 @@ from .contact import Subscriber, ContactMessage
 from .user import User
 from .activity_log import ActivityLog
 from .specification import Specification
-from .product_variant import ProductVariant
 from .product_specification import ProductSpecification
+from .product_category import ProductCategory
 
 __all__ = [
     "TimeStampedModel",
@@ -37,6 +37,6 @@ __all__ = [
     "User",
     "ActivityLog",
     "Specification",
-    "ProductVariant",
     "ProductSpecification",
+    "ProductCategory",
 ]

@@ -16,9 +16,9 @@ from .distributor.service import DistributorService
 from .store.service import StoreService
 from .contact_message.service import ContactMessageService
 from .specification.service import SpecificationService
-from .product_variant.service import ProductVariantService
 from .activity_log.service import ActivityLogService
 from .master_data.service import MasterDataService
+from .product_category.service import ProductCategoryService
 from .system.service import SystemService
 
 __all__ = [
@@ -39,8 +39,8 @@ __all__ = [
     "StoreService",
     "ContactMessageService",
     "SpecificationService",
-    "ProductVariantService",
     "ActivityLogService",
     "MasterDataService",
+    "ProductCategoryService",
     "SystemService",
 ]

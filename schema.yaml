@@ -517,6 +517,46 @@ paths:
                         example: '2025-11-14T02:43:57.268135'
           description: ''
   /int/v1/settings/{slug}:
+    delete:
+      operationId: int_v1_specific_setting_delete
+      description: Endpoint to delete a specific application setting by its slug.
+      summary: Delete Specific Application Setting
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Internal / Settings
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Setting deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Setting deleted successfully
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-14T02:47:35.550732'
+          description: ''
     patch:
       operationId: int_v1_specific_setting_update
       description: Endpoint to update a specific application setting by its slug.
@@ -660,46 +700,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-14T02:40:02.893714+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-14T02:47:35.550732'
-          description: ''
-    delete:
-      operationId: int_v1_specific_setting_delete
-      description: Endpoint to delete a specific application setting by its slug.
-      summary: Delete Specific Application Setting
-      parameters:
-      - in: path
-        name: slug
-        schema:
-          type: string
-        required: true
-      tags:
-      - Internal / Settings
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Setting deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Setting deleted successfully
                   meta:
                     type: object
                     properties:
@@ -880,6 +880,46 @@ paths:
                             nullable: true
           description: ''
   /int/v1/social-media/{id}:
+    delete:
+      operationId: int_v1_social_media_delete
+      description: Endpoint for deleting a social media setting by its primary key
+      summary: Delete Social Media
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Social Media
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Social media data deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Social media data deleted successfully
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-14T01:45:12.345678'
+          description: ''
     patch:
       operationId: int_v1_social_media_update
       description: Endpoint for updating an existing social media setting
@@ -1015,46 +1055,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-14T01:32:04.715422'
-          description: ''
-    delete:
-      operationId: int_v1_social_media_delete
-      description: Endpoint for deleting a social media setting by its primary key
-      summary: Delete Social Media
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Social Media
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Social media data deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Social media data deleted successfully
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-14T01:45:12.345678'
           description: ''
   /int/v1/menus:
     post:
@@ -1218,6 +1218,70 @@ paths:
                         example: '2025-11-16T03:09:30.434680'
           description: ''
   /int/v1/menus/{id}:
+    delete:
+      operationId: int_v1_specific_menu_delete
+      description: Endpoint to delete a specific application menu by its ID.
+      summary: Delete Specific Application Menu
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Menu
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Menu deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Menu deleted successfully
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-16T03:11:44.940787'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Menu not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Menu with id '44' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-16T03:10:46.083547'
+          description: ''
     patch:
       operationId: int_v1_specific_menu_update
       description: Endpoint to update a specific application menu by its ID.
@@ -1390,70 +1454,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-16T03:10:14.853766'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Menu not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Menu with id '44' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-16T03:10:46.083547'
-          description: ''
-    delete:
-      operationId: int_v1_specific_menu_delete
-      description: Endpoint to delete a specific application menu by its ID.
-      summary: Delete Specific Application Menu
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Menu
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Menu deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Menu deleted successfully
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-16T03:11:44.940787'
           description: ''
         '400':
           content:
@@ -1703,6 +1703,70 @@ paths:
                         example: '2025-11-22T23:31:07.208419'
           description: ''
   /int/v1/menu-items/{id}:
+    delete:
+      operationId: int_v1_delete_specific_menu_item
+      description: Delete a specific menu item by its ID.
+      summary: Delete Specific Menu Item
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Menu Item
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Menu item deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Menu item deleted successfully
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-22T23:54:17.921024'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: MenuItem not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: MenuItem with id '2' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-22T23:54:49.696625'
+          description: ''
     patch:
       operationId: int_v1_update_specific_menu_item
       description: Update a specific menu item by its ID.
@@ -1901,70 +1965,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-22T23:35:01.660931'
-          description: ''
-    delete:
-      operationId: int_v1_delete_specific_menu_item
-      description: Delete a specific menu item by its ID.
-      summary: Delete Specific Menu Item
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Menu Item
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Menu item deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Menu item deleted successfully
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-22T23:54:17.921024'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: MenuItem not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: MenuItem with id '2' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-22T23:54:49.696625'
           description: ''
   /int/v1/banners:
     post:
@@ -2182,6 +2182,69 @@ paths:
                             example: false
           description: ''
   /int/v1/banners/{id}:
+    delete:
+      operationId: int_v1_banner_delete_specific_banner
+      description: Delete a specific banner by its ID.
+      summary: Delete a specific banner by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Banner
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Banner deleted successfully.
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Banner deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Banner not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Banner with id '221' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-26T20:04:41.117151'
+          description: ''
     post:
       operationId: int_v1_banner_update_specific_banner
       description: Update a specific banner by its ID.
@@ -2394,69 +2457,6 @@ paths:
                         format: date-time
                         example: '2025-11-26T19:48:32.052814'
           description: ''
-    delete:
-      operationId: int_v1_banner_delete_specific_banner
-      description: Delete a specific banner by its ID.
-      summary: Delete a specific banner by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Banner
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Banner deleted successfully.
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Banner deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Banner not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Banner with id '221' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-26T20:04:41.117151'
-          description: ''
   /int/v1/subscribers:
     get:
       operationId: int_v1_get_all_subscribers
@@ -2542,6 +2542,70 @@ paths:
                             example: false
           description: ''
   /int/v1/subscribers/{id}:
+    delete:
+      operationId: int_v1_delete_subscriber
+      description: Delete a specific subscriber by its ID.
+      summary: Delete Subscriber
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Subscriber
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Subscriber deleted successfully.
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Subscriber deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-27T20:26:17.949363'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Subscriber not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Subscriber with id '12' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-27T20:24:37.935078'
+          description: ''
     get:
       operationId: int_v1_get_specific_subscriber
       description: Retrieve a specific subscriber by its ID.
@@ -2595,70 +2659,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-27T20:25:27.623802'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Subscriber not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Subscriber with id '12' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-27T20:24:37.935078'
-          description: ''
-    delete:
-      operationId: int_v1_delete_subscriber
-      description: Delete a specific subscriber by its ID.
-      summary: Delete Subscriber
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Subscriber
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Subscriber deleted successfully.
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Subscriber deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-27T20:26:17.949363'
           description: ''
         '400':
           content:
@@ -3037,6 +3037,70 @@ paths:
                         format: date-time
                         example: '2025-11-28T11:30:00.000000'
           description: ''
+    delete:
+      operationId: int_v1_page_delete_specific_page
+      description: Delete a specific page by its ID.
+      summary: Delete a specific page by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Page
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Page deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Page deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T12:00:00.000000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Page not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Page with id '99' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T12:00:00.000000'
+          description: ''
     get:
       operationId: int_v1_page_get_specific_page
       description: Retrieve a specific page by its ID.
@@ -3138,70 +3202,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-28T10:30:00.000000'
-          description: ''
-    delete:
-      operationId: int_v1_page_delete_specific_page
-      description: Delete a specific page by its ID.
-      summary: Delete a specific page by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Page
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Page deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Page deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T12:00:00.000000'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Page not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Page with id '99' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T12:00:00.000000'
           description: ''
   /int/v1/pages/{id}/toggle:
     patch:
@@ -3419,6 +3419,415 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-28T10:30:00.000000'
+          description: ''
+  /int/v1/products/specifications:
+    get:
+      operationId: int_v1_specification_get_specifications
+      description: Retrieve all specification master data for products.
+      summary: Get All Specifications
+      tags:
+      - Internal / Product Specification Master
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Specifications retrieved successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Specifications retrieved successfully.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        slug:
+                          type: string
+                          example: size
+                        label:
+                          type: string
+                          example: Size
+                        icon:
+                          type: string
+                          example: ruler
+                        is_active:
+                          type: boolean
+                          example: true
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: '2025-12-05T10:00:00.000000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-12-05T10:00:00.000000'
+          description: ''
+  /int/v1/products/specifications/{slug}:
+    put:
+      operationId: int_v1_specification_update_specific_specification
+      description: Update a specific specification master data. Only provided fields
+        will be updated.
+      summary: Update Specification active status by Slug
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        description: Unique slug identifier for the specification (e.g., size, material,
+          color)
+        required: true
+      tags:
+      - Internal / Product Specification Master
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutUpdateSpecificationRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PutUpdateSpecificationRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PutUpdateSpecificationRequestRequest'
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Specification updated successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Specification updated successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: size
+                      label:
+                        type: string
+                        example: Product Size
+                      icon:
+                        type: string
+                        example: ruler-alt
+                      is_active:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-12-05T10:00:00.000000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-12-05T10:00:00.000000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Business logic error
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Specification with slug 'invalid-slug' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-12-05T10:00:00.000000'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                description: Data validation failed
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 422
+                  message:
+                    type: string
+                    example: Data validation failed
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        field:
+                          type: string
+                          example: label
+                        message:
+                          type: string
+                          example: This field may not be blank.
+                        code:
+                          type: string
+                          example: blank
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-12-05T10:00:00.000000'
+          description: ''
+    get:
+      operationId: int_v1_specification_get_specific_specification
+      description: Retrieve a specific specification master data by its slug identifier.
+      summary: Get Specification by Slug
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        description: Unique slug identifier for the specification (e.g., size, material,
+          color)
+        required: true
+      tags:
+      - Internal / Product Specification Master
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Specification retrieved successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Specification retrieved successfully.
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 1
+                      slug:
+                        type: string
+                        example: size
+                      label:
+                        type: string
+                        example: Size
+                      icon:
+                        type: string
+                        example: ruler
+                      is_active:
+                        type: boolean
+                        example: true
+                      created_at:
+                        type: string
+                        format: date-time
+                        example: '2025-12-05T10:00:00.000000+07:00'
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-12-05T10:00:00.000000'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                description: Specification not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: Specification with slug 'invalid-slug' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-12-05T10:00:00.000000'
+          description: ''
+  /int/v1/products/categories:
+    post:
+      operationId: int_v1_create_product_category
+      description: Create a new product category.
+      summary: Create Product Category
+      tags:
+      - Internal / Product Category Master
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCreateProductCategoryRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostCreateProductCategoryRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostCreateProductCategoryRequestRequest'
+        required: true
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    get:
+      operationId: int_v1_list_product_categories
+      description: List product categories with optional filtering.
+      summary: List Product Categories
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+        description: Filter by active status (true/false)
+      - name: page
+        required: false
+        in: query
+        description: A page number within the paginated result set.
+        schema:
+          type: integer
+      tags:
+      - Internal / Product Category Master
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProductCategoryModelList'
+          description: ''
+  /int/v1/products/categories/{slug}:
+    put:
+      operationId: int_v1_update_product_category
+      description: Update an existing product category.
+      summary: Update Product Category
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Internal / Product Category Master
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PutUpdateProductCategoryRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PutUpdateProductCategoryRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PutUpdateProductCategoryRequestRequest'
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+    delete:
+      operationId: int_v1_delete_product_category
+      description: Delete a specific product category by slug.
+      summary: Delete Product Category
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Internal / Product Category Master
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '204':
+          description: No response body
+    get:
+      operationId: int_v1_retrieve_product_category
+      description: Retrieve a specific product category by slug.
+      summary: Retrieve Product Category
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Internal / Product Category Master
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductCategoryModel'
           description: ''
   /int/v1/products:
     post:
@@ -3884,6 +4293,70 @@ paths:
                         format: date-time
                         example: '2025-11-28T11:45:30.130000'
           description: ''
+    delete:
+      operationId: int_v1_product_delete_specific_product
+      description: Delete a specific product by its ID.
+      summary: Delete a specific product by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Product
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T12:15:45.250000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Product not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Product with id '99' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T12:15:45.250000'
+          description: ''
     get:
       operationId: int_v1_product_get_specific_product
       description: Retrieve a specific product by its ID.
@@ -4026,70 +4499,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-28T10:35:22.130000'
-          description: ''
-    delete:
-      operationId: int_v1_product_delete_specific_product
-      description: Delete a specific product by its ID.
-      summary: Delete a specific product by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Product
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Product deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Product deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T12:15:45.250000'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Product not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Product with id '99' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T12:15:45.250000'
           description: ''
   /int/v1/products/{id}/toggle:
     patch:
@@ -4628,6 +5037,84 @@ paths:
                         format: date-time
                         example: '2025-11-28T15:05:20.305000'
           description: ''
+  /int/v1/products/{id}/specifications:
+    post:
+      operationId: int_v1_product_create_product_specifications
+      description: Create specifications for a specific product.
+      summary: Create product specifications
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Product
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostCreateProductSpecificationRequestRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PostCreateProductSpecificationRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PostCreateProductSpecificationRequestRequest'
+        required: true
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /int/v1/products/{product_id}/specifications/{spec_slug}:
+    delete:
+      operationId: int_v1_product_delete_product_specification
+      description: Delete a specific specification from a product by specification
+        slug.
+      summary: Delete product specification
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: spec_slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - Internal / Product
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Product specification deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Product specification deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T16:00:00.000000'
+          description: ''
   /int/v1/brochures:
     post:
       operationId: int_v1_brochure_create_brochure
@@ -4904,6 +5391,63 @@ paths:
                     type: string
                     example: Brochure with id '1' does not exist.
           description: ''
+    delete:
+      operationId: int_v1_brochure_delete_specific_brochure
+      description: Delete a specific brochure by its ID.
+      summary: Delete Specific Brochure
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Brochure
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Brochure deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Brochure deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T11:45:00.123456'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                description: Brochure not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: Brochure with id '1' does not exist.
+          description: ''
     get:
       operationId: int_v1_brochure_get_specific_brochure
       description: Retrieve a specific brochure by its ID.
@@ -4964,63 +5508,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-28T10:30:00.123456'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: Brochure not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Brochure with id '1' does not exist.
-          description: ''
-    delete:
-      operationId: int_v1_brochure_delete_specific_brochure
-      description: Delete a specific brochure by its ID.
-      summary: Delete Specific Brochure
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Brochure
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Brochure deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Brochure deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T11:45:00.123456'
           description: ''
         '404':
           content:
@@ -5488,6 +5975,64 @@ paths:
                   meta:
                     type: object
           description: ''
+    delete:
+      operationId: int_v1_project_delete_specific_project
+      description: Delete a specific project by its ID.
+      summary: Delete a specific project by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Project
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Project deleted successfully.
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Project deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Project not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Project with id '1' does not exist.
+                  meta:
+                    type: object
+          description: ''
     get:
       operationId: int_v1_project_get_specific_project
       description: Retrieve a specific project by its ID.
@@ -5574,64 +6119,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-28T10:00:00.000000'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Project not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Project with id '1' does not exist.
-                  meta:
-                    type: object
-          description: ''
-    delete:
-      operationId: int_v1_project_delete_specific_project
-      description: Delete a specific project by its ID.
-      summary: Delete a specific project by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Project
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Project deleted successfully.
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Project deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
           description: ''
         '400':
           content:
@@ -6615,6 +7102,70 @@ paths:
                         format: date-time
                         example: '2025-11-28T11:30:00.000000'
           description: ''
+    delete:
+      operationId: int_v1_article_delete_specific_article
+      description: Delete a specific article by its ID.
+      summary: Delete a specific article by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Article
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Article deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Article deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T12:00:00.000000'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Article not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Article with id '99' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-28T12:00:00.000000'
+          description: ''
     get:
       operationId: int_v1_article_get_specific_article
       description: Retrieve a specific article by its ID.
@@ -6727,70 +7278,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-28T10:30:00.000000'
-          description: ''
-    delete:
-      operationId: int_v1_article_delete_specific_article
-      description: Delete a specific article by its ID.
-      summary: Delete a specific article by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Article
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Article deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Article deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T12:00:00.000000'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Article not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Article with id '99' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-28T12:00:00.000000'
           description: ''
   /int/v1/articles/slug/{slug}:
     get:
@@ -7673,6 +8160,69 @@ paths:
                         format: date-time
                         example: '2025-11-29T20:02:42.001064'
           description: ''
+    delete:
+      operationId: int_v1_distributor_delete_specific_distributor
+      description: Delete a specific distributor by its ID.
+      summary: Delete a specific distributor by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Distributor
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Distributor deleted successfully.
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Distributor deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Distributor not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Distributor with id '999' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-29T20:04:41.117151'
+          description: ''
     get:
       operationId: int_v1_distributor_get_specific_distributor
       description: Retrieve a specific distributor by its ID.
@@ -7767,69 +8317,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-29T19:48:32.052814'
-          description: ''
-    delete:
-      operationId: int_v1_distributor_delete_specific_distributor
-      description: Delete a specific distributor by its ID.
-      summary: Delete a specific distributor by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Distributor
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Distributor deleted successfully.
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Distributor deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Distributor not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Distributor with id '999' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-29T20:04:41.117151'
           description: ''
   /int/v1/stores:
     post:
@@ -8210,6 +8697,70 @@ paths:
                         format: date-time
                         example: '2025-11-29T20:01:22.307124'
           description: ''
+    delete:
+      operationId: int_v1_store_delete_specific_store
+      description: Delete a specific store by its ID.
+      summary: Delete a specific store by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Store
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Store deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Store deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-29T20:01:22.307124'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Store not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Store with id '999' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-29T20:01:22.307124'
+          description: ''
     get:
       operationId: int_v1_store_get_specific_store
       description: Retrieve a specific store by its ID.
@@ -8270,70 +8821,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-29T19:06:14.763201+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-29T20:01:22.307124'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Store not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Store with id '999' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-29T20:01:22.307124'
-          description: ''
-    delete:
-      operationId: int_v1_store_delete_specific_store
-      description: Delete a specific store by its ID.
-      summary: Delete a specific store by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Store
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Store deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Store deleted successfully.
                   meta:
                     type: object
                     properties:
@@ -8493,6 +8980,70 @@ paths:
                             example: false
           description: ''
   /int/v1/contact-messages/{id}:
+    delete:
+      operationId: int_v1_delete_contact_message
+      description: Delete a specific contact message by its ID.
+      summary: Delete Contact Message
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Contact Messages
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: Contact message deleted successfully.
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: Contact message deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-29T20:24:37.935078'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                description: Contact message not found.
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Contact message with id '12' does not exist.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-11-29T20:24:37.935078'
+          description: ''
     get:
       operationId: int_v1_get_specific_contact_message
       description: Retrieve a specific contact message by its ID.
@@ -8555,70 +9106,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-29T18:44:38.623000+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-29T20:24:37.935078'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Contact message not found.
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Contact message with id '12' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-11-29T20:24:37.935078'
-          description: ''
-    delete:
-      operationId: int_v1_delete_contact_message
-      description: Delete a specific contact message by its ID.
-      summary: Delete Contact Message
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Contact Messages
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Contact message deleted successfully.
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Contact message deleted successfully.
                   meta:
                     type: object
                     properties:
@@ -8756,1248 +9243,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-11-29T20:24:37.935078'
-          description: ''
-  /int/v1/specifications:
-    get:
-      operationId: int_v1_specification_get_specifications
-      description: Retrieve all specification master data for products.
-      summary: Get All Specifications
-      tags:
-      - Internal / Specification
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Specifications retrieved successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Specifications retrieved successfully.
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        slug:
-                          type: string
-                          example: size
-                        label:
-                          type: string
-                          example: Size
-                        icon:
-                          type: string
-                          example: ruler
-                        is_active:
-                          type: boolean
-                          example: true
-                        created_at:
-                          type: string
-                          format: date-time
-                          example: '2025-12-05T10:00:00.000000+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-05T10:00:00.000000'
-          description: ''
-  /int/v1/specifications/{slug}:
-    put:
-      operationId: int_v1_specification_update_specific_specification
-      description: Update a specific specification master data. Only provided fields
-        will be updated.
-      summary: Update Specification active status by Slug
-      parameters:
-      - in: path
-        name: slug
-        schema:
-          type: string
-        description: Unique slug identifier for the specification (e.g., size, material,
-          color)
-        required: true
-      tags:
-      - Internal / Specification
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PutUpdateSpecificationRequestRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PutUpdateSpecificationRequestRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PutUpdateSpecificationRequestRequest'
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Specification updated successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Specification updated successfully.
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      slug:
-                        type: string
-                        example: size
-                      label:
-                        type: string
-                        example: Product Size
-                      icon:
-                        type: string
-                        example: ruler-alt
-                      is_active:
-                        type: boolean
-                        example: true
-                      created_at:
-                        type: string
-                        format: date-time
-                        example: '2025-12-05T10:00:00.000000+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-05T10:00:00.000000'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Business logic error
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Specification with slug 'invalid-slug' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-05T10:00:00.000000'
-          description: ''
-        '422':
-          content:
-            application/json:
-              schema:
-                description: Data validation failed
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 422
-                  message:
-                    type: string
-                    example: Data validation failed
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        field:
-                          type: string
-                          example: label
-                        message:
-                          type: string
-                          example: This field may not be blank.
-                        code:
-                          type: string
-                          example: blank
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-05T10:00:00.000000'
-          description: ''
-    get:
-      operationId: int_v1_specification_get_specific_specification
-      description: Retrieve a specific specification master data by its slug identifier.
-      summary: Get Specification by Slug
-      parameters:
-      - in: path
-        name: slug
-        schema:
-          type: string
-        description: Unique slug identifier for the specification (e.g., size, material,
-          color)
-        required: true
-      tags:
-      - Internal / Specification
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Specification retrieved successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Specification retrieved successfully.
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      slug:
-                        type: string
-                        example: size
-                      label:
-                        type: string
-                        example: Size
-                      icon:
-                        type: string
-                        example: ruler
-                      is_active:
-                        type: boolean
-                        example: true
-                      created_at:
-                        type: string
-                        format: date-time
-                        example: '2025-12-05T10:00:00.000000+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-05T10:00:00.000000'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: Specification not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Specification with slug 'invalid-slug' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-05T10:00:00.000000'
-          description: ''
-  /int/v1/product-variants/products/{product_slug}/variants:
-    post:
-      operationId: int_v1_product_variant_create
-      description: Create a new variant for a specific product with SKU, model, size,
-        description, optional image, and optional specifications. Use multipart/form-data
-        for image upload. Specifications should be sent as JSON array in 'specifications'
-        field.
-      summary: Create Product Variant
-      parameters:
-      - in: path
-        name: product_slug
-        schema:
-          type: string
-        description: Product slug to create variant for
-        required: true
-      tags:
-      - Internal / Product Variant
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PostCreateProductVariantRequestRequest'
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Product variant created successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Product variant created successfully.
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      product:
-                        type: integer
-                        example: 1
-                      product_name:
-                        type: string
-                        example: Premium Ceramic Floor Tile
-                      product_slug:
-                        type: string
-                        example: premium-ceramic-floor-tile
-                      sku:
-                        type: string
-                        example: CT-FL-001-60X60
-                      model:
-                        type: string
-                        example: CT-FL-001
-                      size:
-                        type: string
-                        example: 60x60 cm
-                      description:
-                        type: string
-                        example: Premium ceramic floor tile in 60x60cm size
-                      image:
-                        type: string
-                        example: /media/uploads/products/variants/variant-001.jpg
-                      is_active:
-                        type: boolean
-                        example: true
-                      specifications:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                              example: 1
-                            specification:
-                              type: integer
-                              example: 1
-                            specification_slug:
-                              type: string
-                              example: color
-                            specification_label:
-                              type: string
-                              example: Color
-                            specification_icon:
-                              type: string
-                              example: palette
-                            value:
-                              type: string
-                              example: White
-                            is_active:
-                              type: boolean
-                              example: true
-                        example:
-                        - id: 1
-                          specification: 1
-                          specification_slug: color
-                          specification_label: Color
-                          specification_icon: palette
-                          value: White
-                          is_active: true
-                        - id: 2
-                          specification: 2
-                          specification_slug: thickness
-                          specification_label: Thickness
-                          specification_icon: layers
-                          value: 8mm
-                          is_active: true
-                      created_at:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.000000+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.770300'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Business validation error
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Product variant with SKU 'CT-FL-001-60X60' already exists.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: Product not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Product with slug 'premium-ceramic-floor-tile' does not
-                      exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-        '422':
-          content:
-            application/json:
-              schema:
-                description: Data validation failed
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 422
-                  message:
-                    type: string
-                    example: Data validation failed
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        field:
-                          type: string
-                          example: sku
-                        message:
-                          type: string
-                          example: Ensure this field has no more than 100 characters.
-                        code:
-                          type: string
-                          example: max_length
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-    get:
-      operationId: int_v1_product_variant_get_by_slug
-      description: Retrieve all variants for a specific product using product slug.
-      summary: Get Product Variants by Slug
-      parameters:
-      - in: path
-        name: product_slug
-        schema:
-          type: string
-        description: Product slug to get variants for
-        required: true
-      tags:
-      - Internal / Product Variant
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Product variants retrieved successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Product variants retrieved successfully.
-                  data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                          example: 1
-                        product:
-                          type: integer
-                          example: 1
-                        product_name:
-                          type: string
-                          example: Premium Ceramic Floor Tile
-                        product_slug:
-                          type: string
-                          example: premium-ceramic-floor-tile
-                        sku:
-                          type: string
-                          example: CT-FL-001-60X60
-                        model:
-                          type: string
-                          example: CT-FL-001
-                        size:
-                          type: string
-                          example: 60x60 cm
-                        description:
-                          type: string
-                          example: Premium ceramic floor tile
-                        image:
-                          type: string
-                          example: /media/uploads/products/variants/variant-001.jpg
-                        is_active:
-                          type: boolean
-                          example: true
-                        specifications:
-                          type: array
-                          items:
-                            type: object
-                        created_at:
-                          type: string
-                          format: date-time
-                          example: '2025-12-06T10:00:00.000000+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.770300'
-          description: ''
-  /int/v1/product-variants/{id}:
-    put:
-      operationId: int_v1_product_variant_update
-      description: Update a specific product variant with partial data support. All
-        fields are optional. Use multipart/form-data for image upload.
-      summary: Update Product Variant
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Product Variant
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PutUpdateProductVariantRequestRequest'
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Product variant updated successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Product variant updated successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.770300'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Business validation error
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Product variant with SKU 'CT-FL-001-60X60' already exists.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: Product variant not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Product variant with id '99' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-        '422':
-          content:
-            application/json:
-              schema:
-                description: Data validation failed
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 422
-                  message:
-                    type: string
-                    example: Data validation failed
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        field:
-                          type: string
-                          example: model
-                        message:
-                          type: string
-                          example: Ensure this field has no more than 100 characters.
-                        code:
-                          type: string
-                          example: max_length
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-    get:
-      operationId: int_v1_product_variant_get_specific
-      description: Retrieve a specific product variant by its ID with all specifications.
-      summary: Get Specific Product Variant
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Product Variant
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Product variant retrieved successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Product variant retrieved successfully.
-                  data:
-                    type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 1
-                      product:
-                        type: integer
-                        example: 1
-                      product_name:
-                        type: string
-                        example: Premium Ceramic Floor Tile
-                      product_slug:
-                        type: string
-                        example: premium-ceramic-floor-tile
-                      sku:
-                        type: string
-                        example: CT-FL-001-60X60
-                      model:
-                        type: string
-                        example: CT-FL-001
-                      size:
-                        type: string
-                        example: 60x60 cm
-                      description:
-                        type: string
-                        example: Premium ceramic floor tile
-                      image:
-                        type: string
-                        example: /media/uploads/products/variants/variant-001.jpg
-                      is_active:
-                        type: boolean
-                        example: true
-                      specifications:
-                        type: array
-                        items:
-                          type: object
-                          properties:
-                            id:
-                              type: integer
-                              example: 1
-                            specification:
-                              type: integer
-                              example: 1
-                            specification_slug:
-                              type: string
-                              example: color
-                            specification_label:
-                              type: string
-                              example: Color
-                            specification_icon:
-                              type: string
-                              example: palette
-                            value:
-                              type: string
-                              example: White
-                            is_active:
-                              type: boolean
-                              example: true
-                            created_at:
-                              type: string
-                              format: date-time
-                            updated_at:
-                              type: string
-                              format: date-time
-                      created_at:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.000000+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.770300'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: Product variant not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Product variant with id '99' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-    delete:
-      operationId: int_v1_product_variant_delete
-      description: Delete a specific product variant and its associated specifications.
-      summary: Delete Product Variant
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Product Variant
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Product variant deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Product variant deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.770300'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: Product variant not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Product variant with id '99' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-  /int/v1/product-variants/{id}/toggle:
-    patch:
-      operationId: int_v1_product_variant_toggle_status
-      description: Toggle the active status of a product variant.
-      summary: Toggle Product Variant Status
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Product Variant
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedPatchToggleProductVariantStatusRequestRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PatchedPatchToggleProductVariantStatusRequestRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PatchedPatchToggleProductVariantStatusRequestRequest'
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Product variant status updated successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Product variant status updated successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.770300'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: Product variant not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Product variant with id '99' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-        '422':
-          content:
-            application/json:
-              schema:
-                description: Data validation failed
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 422
-                  message:
-                    type: string
-                    example: Data validation failed
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        field:
-                          type: string
-                          example: is_active
-                        message:
-                          type: string
-                          example: This field is required.
-                        code:
-                          type: string
-                          example: required
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-  /int/v1/product-variants/{id}/specifications:
-    post:
-      operationId: int_v1_product_variant_update_specifications
-      description: Add or update specifications for a product variant.
-      summary: Update Product Variant Specifications
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Product Variant
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PostUpdateProductVariantSpecificationsRequestRequest'
-          application/x-www-form-urlencoded:
-            schema:
-              $ref: '#/components/schemas/PostUpdateProductVariantSpecificationsRequestRequest'
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/PostUpdateProductVariantSpecificationsRequestRequest'
-        required: true
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Product variant specifications updated successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Product variant specifications updated successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.770300'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                description: Business validation error
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 400
-                  message:
-                    type: string
-                    example: Specification with slug 'invalid-spec' does not exist
-                      or is inactive.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: Product variant not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Product variant with id '99' does not exist.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-        '422':
-          content:
-            application/json:
-              schema:
-                description: Data validation failed
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 422
-                  message:
-                    type: string
-                    example: Data validation failed
-                  errors:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        field:
-                          type: string
-                          example: specifications
-                        message:
-                          type: string
-                          example: This field is required.
-                        code:
-                          type: string
-                          example: required
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
-          description: ''
-  /int/v1/product-variants/{id}/specifications/{spec_slug}:
-    delete:
-      operationId: int_v1_product_variant_delete_specification
-      description: Delete a specific specification from a product variant by specification
-        slug.
-      summary: Delete Product Variant Specification
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      - in: path
-        name: spec_slug
-        schema:
-          type: string
-        description: Specification slug to delete
-        required: true
-      tags:
-      - Internal / Product Variant
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: Product variant specification deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: Product variant specification deleted successfully.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.770300'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: Specification not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: Product specification with slug 'color' does not exist
-                      for variant '1'.
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.498145'
           description: ''
   /int/v1/users:
     post:
@@ -10396,6 +9641,63 @@ paths:
                     type: string
                     example: User with id '999' does not exist.
           description: ''
+    delete:
+      operationId: int_v1_user_delete_specific_user
+      description: Delete a specific user by its ID.
+      summary: Delete a specific user by ID
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - Internal / Users
+      security:
+      - BearerAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                description: User deleted successfully
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  status_code:
+                    type: integer
+                    example: 200
+                  message:
+                    type: string
+                    example: User deleted successfully.
+                  meta:
+                    type: object
+                    properties:
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: '2025-12-06T10:00:00.000000'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                description: User not found
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  status_code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: User with id '999' does not exist.
+          description: ''
     get:
       operationId: int_v1_user_get_specific_user
       description: Retrieve a specific user by its ID.
@@ -10468,63 +9770,6 @@ paths:
                         type: string
                         format: date-time
                         example: '2025-12-05T10:00:00.000000+07:00'
-                  meta:
-                    type: object
-                    properties:
-                      timestamp:
-                        type: string
-                        format: date-time
-                        example: '2025-12-06T10:00:00.000000'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                description: User not found
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  status_code:
-                    type: integer
-                    example: 404
-                  message:
-                    type: string
-                    example: User with id '999' does not exist.
-          description: ''
-    delete:
-      operationId: int_v1_user_delete_specific_user
-      description: Delete a specific user by its ID.
-      summary: Delete a specific user by ID
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: integer
-        required: true
-      tags:
-      - Internal / Users
-      security:
-      - BearerAuth: []
-      - {}
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                description: User deleted successfully
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: true
-                  status_code:
-                    type: integer
-                    example: 200
-                  message:
-                    type: string
-                    example: User deleted successfully.
                   meta:
                     type: object
                     properties:
@@ -12776,6 +12021,26 @@ paths:
       responses: {}
 components:
   schemas:
+    PaginatedProductCategoryModelList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductCategoryModel'
     PatchedPatchAuthUserProfileRequestRequest:
       type: object
       description: Authenticated user profile update request schema.
@@ -12829,13 +12094,6 @@ components:
         is_active:
           type: boolean
           description: Product active status
-    PatchedPatchToggleProductVariantStatusRequestRequest:
-      type: object
-      description: Serializer for toggling product variant active status.
-      properties:
-        is_active:
-          type: boolean
-          description: New active status for the variant (required)
     PatchedPatchToggleProjectStatusRequestRequest:
       type: object
       description: Serializer for toggling project active status.
@@ -14225,6 +13483,30 @@ components:
       required:
       - content
       - title
+    PostCreateProductCategoryRequestRequest:
+      type: object
+      description: Serializer for creating a new product category.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Name of the product category
+          maxLength: 255
+        slug:
+          type: string
+          minLength: 1
+          description: Slug for the product category
+          maxLength: 255
+        description:
+          type: string
+          description: Description of the product category (optional)
+        is_active:
+          type: boolean
+          description: Whether the product category is active
+      required:
+      - is_active
+      - name
+      - slug
     PostCreateProductRequestRequest:
       type: object
       description: Serializer for creating a new product.
@@ -14239,6 +13521,27 @@ components:
           minLength: 1
           description: Product name
           maxLength: 255
+        category:
+          enum:
+          - cemento
+          - classic
+          - granity
+          - marble
+          - stone
+          - string
+          - wood
+          type: string
+          x-spec-enum-id: daa326e7b2d6a2b8
+          description: |-
+            Product category slug
+
+            * `cemento` - Cemento
+            * `classic` - Classic
+            * `granity` - Granity
+            * `marble` - Marble
+            * `stone` - Stone
+            * `string` - string
+            * `wood` - Wood
         description:
           type: string
           description: Product description
@@ -14282,42 +13585,21 @@ components:
           type: boolean
           description: Product active status
       required:
+      - category
       - is_active
       - name
       - slug
-    PostCreateProductVariantRequestRequest:
+    PostCreateProductSpecificationRequestRequest:
       type: object
-      description: Serializer for creating a new product variant.
+      description: Serializer for creating a new product specification.
       properties:
-        sku:
-          type: string
-          description: Stock Keeping Unit - unique identifier (optional, max 100 characters)
-          maxLength: 100
-        model:
-          type: string
-          description: Model name or code (optional, max 100 characters)
-          maxLength: 100
-        size:
-          type: string
-          description: Size specification (optional, max 100 characters, e.g., '60x60
-            cm')
-          maxLength: 100
-        description:
-          type: string
-          description: Detailed description of the variant (optional)
-        image:
-          type: string
-          format: binary
-          nullable: true
-          description: Variant image (optional)
-        is_active:
-          type: boolean
-          description: 'Whether the variant is active and visible (optional, default:
-            true)'
         specifications:
-          description: 'JSON array of specifications with their values (optional).
-            Example: [{"specification_slug": "color", "value": "red", "highlighted":
-            true}]'
+          type: array
+          items:
+            $ref: '#/components/schemas/SpecificationItemRequest'
+          description: List of specifications for the product
+      required:
+      - specifications
     PostCreateProjectRequestRequest:
       type: object
       description: Serializer for creating a new project.
@@ -16545,17 +15827,6 @@ components:
           nullable: true
           description: Update geographic longitude coordinate (optional, decimal format,
             leave null to keep current value)
-    PostUpdateProductVariantSpecificationsRequestRequest:
-      type: object
-      description: Serializer for adding/updating variant specifications.
-      properties:
-        specifications:
-          type: array
-          items:
-            $ref: '#/components/schemas/SpecificationValueRequest'
-          description: List of specifications with their values
-      required:
-      - specifications
     PostUpdateStoreRequestRequest:
       type: object
       description: Serializer for partial updates to existing store records.
@@ -17631,6 +16902,32 @@ components:
           format: binary
       required:
       - image
+    ProductCategoryModel:
+      type: object
+      description: Serializer for ProductCategory model.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        slug:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        is_active:
+          type: boolean
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - slug
     PutAuthTokenRequestRequest:
       type: object
       description: User token refresh request schema.
@@ -17762,6 +17059,26 @@ components:
         is_active:
           type: boolean
           description: Whether the page is active and visible to public.
+    PutUpdateProductCategoryRequestRequest:
+      type: object
+      description: Serializer for updating an existing product category.
+      properties:
+        name:
+          type: string
+          minLength: 1
+          description: Name of the product category
+          maxLength: 255
+        slug:
+          type: string
+          minLength: 1
+          description: Slug for the product category
+          maxLength: 255
+        description:
+          type: string
+          description: Description of the product category (optional)
+        is_active:
+          type: boolean
+          description: Whether the product category is active
     PutUpdateProductRequestRequest:
       type: object
       description: Serializer for updating an existing product.
@@ -17776,6 +17093,27 @@ components:
           minLength: 1
           description: Product name
           maxLength: 255
+        category:
+          enum:
+          - cemento
+          - classic
+          - granity
+          - marble
+          - stone
+          - string
+          - wood
+          type: string
+          x-spec-enum-id: daa326e7b2d6a2b8
+          description: |-
+            Product category slug
+
+            * `cemento` - Cemento
+            * `classic` - Classic
+            * `granity` - Granity
+            * `marble` - Marble
+            * `stone` - Stone
+            * `string` - string
+            * `wood` - Wood
         description:
           type: string
           description: Product description
@@ -17818,33 +17156,6 @@ components:
         is_active:
           type: boolean
           description: Product active status
-    PutUpdateProductVariantRequestRequest:
-      type: object
-      description: Serializer for updating an existing product variant.
-      properties:
-        sku:
-          type: string
-          description: Stock Keeping Unit - unique identifier (optional, max 100 characters)
-          maxLength: 100
-        model:
-          type: string
-          description: Model name or code (optional, max 100 characters)
-          maxLength: 100
-        size:
-          type: string
-          description: Size specification (optional, max 100 characters)
-          maxLength: 100
-        description:
-          type: string
-          description: Detailed description of the variant (optional)
-        image:
-          type: string
-          format: binary
-          nullable: true
-          description: Variant image (optional)
-        is_active:
-          type: boolean
-          description: Whether the variant is active and visible (optional)
     PutUpdateProjectRequestRequest:
       type: object
       description: Serializer for updating an existing project.
@@ -17921,21 +17232,24 @@ components:
         is_active:
           type: boolean
           description: Whether the user is active
-    SpecificationValueRequest:
+    SpecificationItemRequest:
       type: object
-      description: Serializer for specification value input.
+      description: Serializer for individual specification item.
       properties:
-        specification_slug:
+        slug:
           type: string
           minLength: 1
-          description: Slug of the specification (required, max 150 characters)
-          maxLength: 150
+          description: Specification slug
         value:
           type: string
           minLength: 1
-          description: Value for the specification (required)
+          description: Specification value
+        highlighted:
+          type: boolean
+          description: 'Whether to highlight this specification (false: technical
+            specs, true: key features)'
       required:
-      - specification_slug
+      - slug
       - value
   securitySchemes:
     BearerAuth:
@@ -17962,12 +17276,12 @@ tags:
   description: Application subscriber management
 - name: Internal / Page
   description: Application page management
-- name: Internal / Specification
-  description: Application specification master data management
+- name: Internal / Product Specification Master
+  description: Application product specification master data management
+- name: Internal / Product Category Master
+  description: Application product category master data management
 - name: Internal / Product
   description: Application product management
-- name: Internal / Product Variant
-  description: Application product variant management
 - name: Internal / Brochure
   description: Application brochure management
 - name: Internal / Project

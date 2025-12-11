@@ -16,12 +16,5 @@ class Migration(migrations.Migration):
                 ON products(name, description)
             """,
             reverse_sql="DROP INDEX idx_product_fulltext ON products",
-        ),
-        migrations.RunSQL(
-            sql="""
-                CREATE FULLTEXT INDEX idx_product_variant_fulltext
-                ON product_variants(model, description)
-            """,
-            reverse_sql="DROP INDEX idx_product_variant_fulltext ON product_variants",
-        ),
+        )
     ]

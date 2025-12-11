@@ -1165,3 +1165,60 @@ class ProductAPI:
             return func(*args, **kwargs)
 
         return wrapper
+
+    @staticmethod
+    def create_product_specification_schema(func):
+        """Schema for creating product specifications."""
+
+        @extend_schema(
+            tags=TAGS,
+            operation_id="int_v1_product_create_product_specifications",
+            summary="Create product specifications",
+            description="Create specifications for a specific product.",
+            request=serializers.PostCreateProductSpecificationRequest,
+        )
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    @staticmethod
+    def delete_product_specification_schema(func):
+        """Schema for deleting a product specification."""
+
+        @extend_schema(
+            tags=TAGS,
+            operation_id="int_v1_product_delete_product_specification",
+            summary="Delete product specification",
+            description="Delete a specific specification from a product by specification slug.",
+            responses={
+                200: {
+                    "description": "Product specification deleted successfully",
+                    "type": "object",
+                    "properties": {
+                        "success": {"type": "boolean", "example": True},
+                        "status_code": {"type": "integer", "example": 200},
+                        "message": {
+                            "type": "string",
+                            "example": "Product specification deleted successfully.",
+                        },
+                        "meta": {
+                            "type": "object",
+                            "properties": {
+                                "timestamp": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "example": "2025-11-28T16:00:00.000000",
+                                }
+                            },
+                        },
+                    },
+                },
+            },
+        )
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper

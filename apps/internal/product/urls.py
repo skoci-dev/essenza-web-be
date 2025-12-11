@@ -50,4 +50,14 @@ urlpatterns = [
         ProductViewSet.as_view({"delete": "delete_product_gallery_image"}),
         name="delete_product_gallery_image",
     ),
+    path(
+        "/<int:pk>/specifications",
+        ProductViewSet.as_view({"post": "create_product_specifications"}),
+        name="create_product_specifications",
+    ),
+    path(
+        "/<int:product_id>/specifications/<slug:spec_slug>",
+        ProductViewSet.as_view({"delete": "delete_product_specifications"}),
+        name="delete_product_specifications",
+    ),
 ]

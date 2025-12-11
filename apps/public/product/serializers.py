@@ -1,41 +1,14 @@
 from rest_framework import serializers
 
-from core.models import Product, ProductVariant, ProductSpecification, Brochure
+from core.models import Product, ProductSpecification, Brochure
 
 
 class ProductCollectionSerializer(serializers.ModelSerializer):
+    category = serializers.CharField(source="category.name", allow_null=True)
+
     class Meta:
         model = Product
-        fields = [
-            "slug",
-            "name",
-            "image",
-            "product_type",
-        ]
-
-
-class ProductVariantNestedSerializer(serializers.ModelSerializer):
-    class ProductSpecificationNestedSerializer(serializers.ModelSerializer):
-        label = serializers.CharField(source="specification.label")
-        icon = serializers.CharField(source="specification.icon")
-
-        class Meta:
-            model = ProductSpecification
-            fields = ["label", "icon", "value", "highlighted"]
-
-    specifications = ProductSpecificationNestedSerializer(
-        source="product_specifications", many=True
-    )
-
-    class Meta:
-        model = ProductVariant
-        fields = [
-            "model",
-            "size",
-            "description",
-            "image",
-            "specifications",
-        ]
+        fields = ["slug", "name", "image", "product_type", "category"]
 
 
 class BrochureNestedSerializer(serializers.ModelSerializer):
@@ -44,22 +17,37 @@ class BrochureNestedSerializer(serializers.ModelSerializer):
         fields = ["title", "file_url"]
 
 
+class SpecificationNestedSerializer(serializers.ModelSerializer):
+    slug = serializers.CharField(source="specification.slug")
+    label = serializers.CharField(source="specification.label")
+    icon = serializers.CharField(source="specification.icon")
+    order_number = serializers.IntegerField(source="specification.order_number")
+
+    class Meta:
+        model = ProductSpecification
+        fields = ["slug", "label", "icon", "value", "highlighted", "order_number"]
+
+
 class ProductDetailSerializer(serializers.ModelSerializer):
-    variants = ProductVariantNestedSerializer(many=True)
     brochure = BrochureNestedSerializer()
+    category = serializers.CharField(source="category.name", allow_null=True)
+    specifications = SpecificationNestedSerializer(
+        source="product_specifications", many=True
+    )
 
     class Meta:
         model = Product
         fields = [
             "slug",
             "name",
+            "category",
             "description",
             "image",
             "product_type",
             "brochure",
-            "variants",
             "gallery",
             "meta_title",
             "meta_description",
             "meta_keywords",
+            "specifications",
         ]

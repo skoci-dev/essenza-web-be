@@ -11,9 +11,11 @@ class SpecificationModelSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "slug",
+            "name",
             "label",
             "icon",
             "is_active",
+            "order_number",
             "created_at",
         ]
 

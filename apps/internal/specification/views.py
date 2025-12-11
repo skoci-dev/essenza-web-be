@@ -31,7 +31,10 @@ class SpecificationViewSet(BaseViewSet):
     @jwt_required
     def get_specifications(self, request: Request) -> Response:
         """Retrieve all specifications with optimized queryset."""
-        specifications = self._specification_service.get_specifications()
+        is_active_param = request.query_params.get("active", None)
+        specifications = self._specification_service.get_specifications(
+            is_active=is_active_param == "true" if is_active_param else None
+        )
         return api_response(request).success(
             message="Specifications retrieved successfully.",
             data=serializers.SpecificationModelSerializer(
