@@ -4,6 +4,7 @@ from .user_role import UserRole
 from .language import Language
 from .actor_type import ActorType
 from .action_type import ActionType
+from .indonesian_city import IndonesianCity
 
 __all__ = [
     'MenuPosition',
@@ -12,4 +13,5 @@ __all__ = [
     'Language',
     'ActorType',
     'ActionType',
+    'IndonesianCity',
 ]
