@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import logging
 
 from django.db.models import QuerySet
@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from core.enums import ActionType
 from core.service import BaseService, required_context
 from core.models import Distributor
+from core.enums import IndonesianCity
 
 from . import dto
 
@@ -45,16 +46,27 @@ class DistributorService(BaseService):
             logger.error(f"Error creating distributor: {e}")
             return Distributor(), e
 
-    def get_distributors(self) -> QuerySet[Distributor]:
+    def get_distributors(
+        self, filters: Optional[dto.FilterDistributorDTO] = None
+    ) -> QuerySet[Distributor]:
         """Retrieve all distributors ordered by creation date."""
-        return Distributor.objects.order_by("-created_at")
+        queryset = Distributor.objects.order_by("-created_at")
+        if filters:
+            if filters.name:
+                queryset = queryset.filter(name__icontains=filters.name)
+            if filters.city:
+                queryset = queryset.filter(city=filters.city)
+        return queryset
 
     def get_paginated_distributors(
-        self, str_page_number: str, str_page_size: str
+        self,
+        str_page_number: str,
+        str_page_size: str,
+        filters: Optional[dto.FilterDistributorDTO] = None,
     ) -> Page:
         """Retrieve paginated distributors with efficient ordering."""
         return self.get_paginated_data(
-            self.get_distributors(), str_page_number, str_page_size
+            self.get_distributors(filters), str_page_number, str_page_size
         )
 
     def get_specific_distributor(
@@ -174,3 +186,23 @@ class DistributorService(BaseService):
         if exclude_id is not None:
             queryset = queryset.exclude(id=exclude_id)
         return queryset.exists()
+
+    def get_available_cities(self) -> List[IndonesianCity]:
+        """Get a list of available cities with distributors."""
+        city_slugs = (
+            Distributor.objects.values_list("city", flat=True)
+            .distinct()
+            .order_by("city")
+        )
+
+        # Convert slugs to IndonesianCity enum instances
+        available_cities = []
+        for slug in city_slugs:
+            try:
+                city_enum = IndonesianCity(slug)
+                available_cities.append(city_enum)
+            except ValueError:
+                logger.warning(f"Invalid city slug found in database: {slug}")
+                continue
+
+        return available_cities

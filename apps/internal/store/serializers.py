@@ -3,23 +3,27 @@ from rest_framework import serializers
 from decimal import Decimal
 
 from core.models import Store
+from core.enums import IndonesianCity
 
 
 class StoreModelSerializer(serializers.ModelSerializer):
     """Serializer for Store model."""
 
+    class CityField(serializers.ChoiceField):
+        """Custom field to represent IndonesianCity enum choices."""
+
+        def to_representation(self, value) -> dict[str, str]:
+            city_enum = IndonesianCity(value)
+            return {
+                "slug": city_enum.value,
+                "label": city_enum.label,
+            }
+
+    city = CityField(choices=IndonesianCity.choices)
+
     class Meta:
         model = Store
-        fields = [
-            "id",
-            "name",
-            "address",
-            "phone",
-            "email",
-            "latitude",
-            "longitude",
-            "created_at",
-        ]
+        fields = "__all__"
 
 
 class PostCreateStoreRequest(serializers.Serializer):
@@ -28,6 +32,10 @@ class PostCreateStoreRequest(serializers.Serializer):
     name = serializers.CharField(
         max_length=255,
         help_text="Full name of the store or showroom (required, max 255 characters)",
+    )
+    city = serializers.ChoiceField(
+        choices=IndonesianCity.choices,
+        help_text="City where the store is located (required, choose from available options)",
     )
     address = serializers.CharField(
         help_text="Complete address including street, city, and postal code (required)"
@@ -43,6 +51,12 @@ class PostCreateStoreRequest(serializers.Serializer):
         allow_blank=True,
         required=False,
         help_text="Contact email address (optional, max 100 characters, must be valid email format)",
+    )
+    gmap_link = serializers.URLField(
+        max_length=500,
+        allow_blank=True,
+        required=False,
+        help_text="Google Maps link to the store location (optional, max 500 characters)",
     )
     latitude = serializers.DecimalField(
         max_digits=10,
@@ -85,6 +99,12 @@ class PostUpdateStoreRequest(serializers.Serializer):
         allow_null=True,
         help_text="Full name of the store or showroom (optional, max 255 characters)",
     )
+    city = serializers.ChoiceField(
+        choices=IndonesianCity.choices,
+        allow_null=True,
+        required=False,
+        help_text="City where the store is located (optional, choose from available options)",
+    )
     address = serializers.CharField(
         required=False,
         allow_null=True,
@@ -103,6 +123,13 @@ class PostUpdateStoreRequest(serializers.Serializer):
         allow_null=True,
         required=False,
         help_text="Contact email address (optional, max 100 characters, must be valid email format)",
+    )
+    gmap_link = serializers.URLField(
+        max_length=500,
+        allow_blank=True,
+        allow_null=True,
+        required=False,
+        help_text="Google Maps link to the store location (optional, max 500 characters)",
     )
     latitude = serializers.DecimalField(
         max_digits=10,

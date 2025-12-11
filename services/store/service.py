@@ -1,5 +1,5 @@
 from copy import deepcopy
-from typing import Optional, Tuple
+from typing import Optional, Tuple, List
 import logging
 
 from django.db.models import QuerySet
@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from core.enums import ActionType
 from core.service import BaseService, required_context
 from core.models import Store
+from core.enums import IndonesianCity
 
 from . import dto
 
@@ -45,14 +46,27 @@ class StoreService(BaseService):
             logger.error(f"Error creating store: {e}")
             return Store(), e
 
-    def get_stores(self) -> QuerySet[Store]:
+    def get_stores(
+        self, filters: Optional[dto.FilterDistributorDTO] = None
+    ) -> QuerySet[Store]:
         """Retrieve all stores ordered by creation date."""
-        return Store.objects.order_by("-created_at")
+        queryset = Store.objects.order_by("-created_at")
+        if filters:
+            if filters.name:
+                queryset = queryset.filter(name__icontains=filters.name)
+            if filters.city:
+                queryset = queryset.filter(city=filters.city)
+        return queryset
 
-    def get_paginated_stores(self, str_page_number: str, str_page_size: str) -> Page:
+    def get_paginated_stores(
+        self,
+        str_page_number: str,
+        str_page_size: str,
+        filters: Optional[dto.FilterDistributorDTO] = None,
+    ) -> Page:
         """Retrieve paginated stores with efficient ordering."""
         return self.get_paginated_data(
-            self.get_stores(), str_page_number, str_page_size
+            self.get_stores(filters), str_page_number, str_page_size
         )
 
     def get_specific_store(self, pk: int) -> Tuple[Store, Optional[Exception]]:
@@ -163,3 +177,21 @@ class StoreService(BaseService):
         if exclude_id is not None:
             queryset = queryset.exclude(id=exclude_id)
         return queryset.exists()
+
+    def get_available_cities(self) -> List[IndonesianCity]:
+        """Get a list of available cities with stores."""
+        city_slugs = (
+            Store.objects.values_list("city", flat=True).distinct().order_by("city")
+        )
+
+        # Convert slugs to IndonesianCity enum instances
+        available_cities = []
+        for slug in city_slugs:
+            try:
+                city_enum = IndonesianCity(slug)
+                available_cities.append(city_enum)
+            except ValueError:
+                logger.warning(f"Invalid city slug found in database: {slug}")
+                continue
+
+        return available_cities

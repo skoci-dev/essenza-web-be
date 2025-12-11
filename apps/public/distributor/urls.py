@@ -3,4 +3,7 @@ from django.urls import path
 from .views import DistributorPublicViewSet
 
 
-urlpatterns = [path("", DistributorPublicViewSet.as_view({"get": "list_distributors"}))]
+urlpatterns = [
+    path("", DistributorPublicViewSet.as_view({"get": "list_distributors"})),
+    path("/cities", DistributorPublicViewSet.as_view({"get": "get_available_cities"})),
+]

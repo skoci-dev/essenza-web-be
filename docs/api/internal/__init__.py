@@ -16,6 +16,7 @@ from .contact_message import ContactMessageAPI
 from .specification import SpecificationAPI
 from .product_variant import ProductVariantAPI
 from .user import UserAPI
+from .master_data import MasterDataAPI
 from .system import SystemAPI
 
 __all__ = [
@@ -37,5 +38,6 @@ __all__ = [
     "SpecificationAPI",
     "ProductVariantAPI",
     "UserAPI",
+    "MasterDataAPI",
     "SystemAPI",
 ]

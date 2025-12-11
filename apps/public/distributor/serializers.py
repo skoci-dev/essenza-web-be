@@ -9,3 +9,10 @@ class DistributorCollectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Distributor
         exclude = ["id", "created_at"]
+
+
+class IndonesianCitySerializer(serializers.Serializer):
+    """Serializer for Indonesian city choices."""
+
+    slug = serializers.CharField(source="value")
+    label = serializers.CharField()

@@ -1,4 +1,5 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from docs.api.constants import DEFAULT_PAGINATION_PARAMS
 
@@ -18,7 +19,23 @@ class DistributorPublicAPI:
             summary="List Distributor Links",
             description="Retrieve a paginated list of distributor links.",
             auth=[],
-            parameters=DEFAULT_PAGINATION_PARAMS,
+            parameters=[
+                *DEFAULT_PAGINATION_PARAMS,
+                OpenApiParameter(
+                    name="name",
+                    description="Search distributors by name (case-insensitive, partial match).",
+                    required=False,
+                    type=OpenApiTypes.STR,
+                    location=OpenApiParameter.QUERY,
+                ),
+                OpenApiParameter(
+                    name="city",
+                    description="Filter distributors by city slug.",
+                    required=False,
+                    type=OpenApiTypes.STR,
+                    location=OpenApiParameter.QUERY,
+                ),
+            ],
             responses={
                 200: {
                     "description": "Distributor links retrieved successfully.",
@@ -101,6 +118,22 @@ class DistributorPublicAPI:
                     },
                 }
             },
+        )
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    @staticmethod
+    def get_available_cities_schema(func):
+        """Schema for getting available cities with distributors."""
+
+        @extend_schema(
+            tags=TAGS,
+            operation_id="pub_v1_distributors_get_available_cities",
+            summary="Get Available Cities with Distributors",
+            description="Retrieve a list of cities that have distributors.",
+            auth=[],
         )
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)

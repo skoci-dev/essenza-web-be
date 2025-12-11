@@ -2,10 +2,23 @@ from typing import Optional
 from rest_framework import serializers
 
 from core.models import Distributor
+from core.enums import IndonesianCity
 
 
 class DistributorModelSerializer(serializers.ModelSerializer):
     """Serializer for Distributor model."""
+
+    class CityField(serializers.ChoiceField):
+        """Custom field to represent IndonesianCity enum choices."""
+
+        def to_representation(self, value) -> dict[str, str]:
+            city_enum = IndonesianCity(value)
+            return {
+                "slug": city_enum.value,
+                "label": city_enum.label,
+            }
+
+    city = CityField(choices=IndonesianCity.choices)
 
     class Meta:
         model = Distributor
@@ -18,6 +31,10 @@ class PostCreateDistributorRequest(serializers.Serializer):
     name = serializers.CharField(
         max_length=255,
         help_text="Full name of the distributor company or individual (required, max 255 characters)",
+    )
+    city = serializers.ChoiceField(
+        choices=IndonesianCity.choices,
+        help_text="City where the distributor is located (required, choose from available options)",
     )
     address = serializers.CharField(
         help_text="Complete address including street, city, and postal code (required)"
@@ -39,6 +56,12 @@ class PostCreateDistributorRequest(serializers.Serializer):
         allow_blank=True,
         required=False,
         help_text="Company website URL (optional, max 255 characters, e.g., https://example.com)",
+    )
+    gmap_link = serializers.URLField(
+        max_length=500,
+        allow_blank=True,
+        required=False,
+        help_text="Google Maps link to the distributor location (optional, max 500 characters)",
     )
     latitude = serializers.DecimalField(
         max_digits=10,
@@ -82,6 +105,12 @@ class PostUpdateDistributorRequest(serializers.Serializer):
         required=False,
         help_text="Update distributor name (optional, max 255 characters, leave empty to keep current value)",
     )
+    city = serializers.ChoiceField(
+        choices=IndonesianCity.choices,
+        allow_null=True,
+        required=False,
+        help_text="Update city where the distributor is located (optional, choose from available options, leave null to keep current value)",
+    )
     address = serializers.CharField(
         allow_blank=True,
         allow_null=True,
@@ -108,6 +137,13 @@ class PostUpdateDistributorRequest(serializers.Serializer):
         allow_null=True,
         required=False,
         help_text="Update company website URL (optional, max 255 characters, must be valid URL, leave empty to keep current value)",
+    )
+    gmap_link = serializers.URLField(
+        max_length=500,
+        allow_blank=True,
+        allow_null=True,
+        required=False,
+        help_text="Update Google Maps link to the distributor location (optional, max 500 characters, leave empty to keep current value)",
     )
     latitude = serializers.DecimalField(
         max_digits=10,

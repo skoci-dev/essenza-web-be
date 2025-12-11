@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from core.views import BaseViewSet
 from utils import api_response
 from services import StoreService
+from services.store import dto
 from docs.api.public import StorePublicAPI
 
 from . import serializers
@@ -19,14 +20,28 @@ class StorePublicViewSet(BaseViewSet):
         """List all store locations."""
         str_page_number = request.query_params.get("page", "1")
         str_page_size = request.query_params.get("page_size", "20")
+        city = request.query_params.get("city", None)
+        name = request.query_params.get("name", None)
 
         page = StorePublicViewSet._store_service.get_paginated_stores(
             str_page_number=str_page_number,
             str_page_size=str_page_size,
+            filters=(
+                dto.FilterDistributorDTO(city=city, name=name) if city or name else None
+            ),
         )
 
         return api_response(request).paginated(
             message="Store locations retrieved successfully.",
             data=serializers.StoreCollectionSerializer(page, many=True).data,
             page=page,
+        )
+
+    @StorePublicAPI.get_available_cities_schema
+    def get_available_cities(self, request: Request) -> Response:
+        """Get a list of available cities with stores."""
+        cities = self._store_service.get_available_cities()
+        return api_response(request).success(
+            message="Available cities retrieved successfully.",
+            data=serializers.IndonesianCitySerializer(cities, many=True).data,
         )
