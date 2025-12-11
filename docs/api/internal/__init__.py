@@ -14,7 +14,7 @@ from .distributor import DistributorAPI
 from .store import StoreAPI
 from .contact_message import ContactMessageAPI
 from .specification import SpecificationAPI
-from .product_variant import ProductVariantAPI
+from .product_category import ProductCategoryAPI
 from .user import UserAPI
 from .master_data import MasterDataAPI
 from .system import SystemAPI
@@ -36,7 +36,7 @@ __all__ = [
     "StoreAPI",
     "ContactMessageAPI",
     "SpecificationAPI",
-    "ProductVariantAPI",
+    "ProductCategoryAPI",
     "UserAPI",
     "MasterDataAPI",
     "SystemAPI",

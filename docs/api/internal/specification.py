@@ -4,7 +4,7 @@ from drf_spectacular.types import OpenApiTypes
 
 from apps.internal.specification import serializers
 
-TAGS = ["Internal / Specification"]
+TAGS = ["Internal / Product Specification Master"]
 
 
 class SpecificationAPI:

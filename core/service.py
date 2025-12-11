@@ -36,6 +36,14 @@ from utils.log.activity_log import (
 )
 from core.enums.action_type import ActionType
 
+
+# Custom Service Exception
+class ServiceException(Exception):
+    """Base exception for all service layer operations"""
+
+    pass
+
+
 # Type variables for enhanced type safety
 ServiceType = TypeVar("ServiceType", bound="BaseService")
 

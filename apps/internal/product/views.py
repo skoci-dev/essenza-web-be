@@ -86,7 +86,7 @@ class ProductViewSet(BaseViewSet):
             )
 
             return api_response(request).paginated(
-                data=serializers.ProductModelSerializer(
+                data=serializers.ProductCollectionSerializer(
                     page.object_list, many=True
                 ).data,
                 page=page,
@@ -330,4 +330,74 @@ class ProductViewSet(BaseViewSet):
             )
             return api_response(request).server_error(
                 message="An unexpected error occurred while deleting the gallery image."
+            )
+
+    @ProductAPI.create_product_specification_schema
+    @jwt_required
+    @validate_body(serializers.PostCreateProductSpecificationRequest)
+    def create_product_specifications(
+        self, request: Request, pk: int, validated_data: Dict[str, Any]
+    ) -> Response:
+        """Create specifications for a specific product."""
+        try:
+            logger.info(f"Creating specifications for product with ID: {pk}")
+
+            specification_items = [
+                dto.CreateProductSpecificationItemDTO(**item)
+                for item in validated_data.get("specifications", [])
+            ]
+
+            product, error = self._product_service.use_context(
+                request
+            ).add_or_update_specifications_to_product(
+                product_id=pk,
+                specifications=specification_items,
+            )
+            if error:
+                logger.error(f"Error creating product specifications: {str(error)}")
+                return api_response(request).error(message=str(error))
+
+            logger.info(f"Specifications created for product {pk} successfully")
+            return api_response(request).success(
+                message="Product specifications created successfully.",
+                data=serializers.ProductModelSerializer(product).data,
+            )
+        except Exception as e:
+            logger.error(
+                f"Unexpected error in create_product_specifications: {str(e)}",
+                exc_info=True,
+            )
+            return api_response(request).server_error(
+                message="An unexpected error occurred while creating product specifications."
+            )
+
+    @ProductAPI.delete_product_specification_schema
+    @jwt_required
+    def delete_product_specifications(
+        self, request: Request, product_id: int, spec_slug: str
+    ) -> Response:
+        """Delete all specifications for a specific product."""
+        try:
+            logger.info(f"Deleting specifications for product with ID: {product_id}")
+
+            if error := self._product_service.use_context(
+                request
+            ).remove_specifications_from_product(
+                product_id=product_id,
+                specification_slugs=[spec_slug],
+            ):
+                logger.error(f"Error deleting product specifications: {str(error)}")
+                return api_response(request).error(message=str(error))
+
+            logger.info(f"Specifications deleted for product {product_id} successfully")
+            return api_response(request).success(
+                message="Product specifications deleted successfully."
+            )
+        except Exception as e:
+            logger.error(
+                f"Unexpected error in delete_product_specifications: {str(e)}",
+                exc_info=True,
+            )
+            return api_response(request).server_error(
+                message="An unexpected error occurred while deleting product specifications."
             )

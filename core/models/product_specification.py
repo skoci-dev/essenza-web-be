@@ -1,13 +1,13 @@
 from django.db import models
 from core.models._base import TimeStampedModel
-from core.models.product_variant import ProductVariant
+from core.models import Product
 from core.models.specification import Specification
 
 
 class ProductSpecification(TimeStampedModel):
     id = models.BigAutoField(primary_key=True, editable=False)
-    product_variant = models.ForeignKey(
-        ProductVariant,
+    product = models.ForeignKey(
+        Product,
         on_delete=models.CASCADE,
         related_name="product_specifications",
     )
@@ -27,4 +27,4 @@ class ProductSpecification(TimeStampedModel):
         db_table: str = "product_specifications"
 
     def __str__(self) -> str:
-        return f"{self.id}: {self.product_variant} - {self.specification.label}: {self.value}"
+        return f"{self.id}: {self.product} - {self.specification.label}: {self.value}"
