@@ -1,4 +1,5 @@
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, OpenApiParameter
+from drf_spectacular.types import OpenApiTypes
 
 from docs.api.constants import DEFAULT_PAGINATION_PARAMS
 
@@ -18,7 +19,23 @@ class StorePublicAPI:
             summary="List Store Locations",
             description="Retrieve a paginated list of store locations.",
             auth=[],
-            parameters=DEFAULT_PAGINATION_PARAMS,
+            parameters=[
+                *DEFAULT_PAGINATION_PARAMS,
+                OpenApiParameter(
+                    name="name",
+                    description="Search stores by name (case-insensitive, partial match).",
+                    required=False,
+                    type=OpenApiTypes.STR,
+                    location=OpenApiParameter.QUERY,
+                ),
+                OpenApiParameter(
+                    name="city",
+                    description="Filter stores by city slug.",
+                    required=False,
+                    type=OpenApiTypes.STR,
+                    location=OpenApiParameter.QUERY,
+                ),
+            ],
             responses={
                 200: {
                     "description": "Store locations retrieved successfully.",
@@ -97,6 +114,22 @@ class StorePublicAPI:
                     },
                 }
             },
+        )
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        return wrapper
+
+    @staticmethod
+    def get_available_cities_schema(func):
+        """Schema for getting available cities with stores."""
+
+        @extend_schema(
+            tags=TAGS,
+            operation_id="pub_v1_stores_get_available_cities",
+            summary="Get Available Cities with Stores",
+            description="Retrieve a list of cities that have store locations.",
+            auth=[],
         )
         def wrapper(*args, **kwargs):
             return func(*args, **kwargs)

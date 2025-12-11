@@ -10,8 +10,10 @@ class CreateStoreDTO(BaseDTO):
 
     name: str
     address: str
+    city: str
     phone: Optional[str] = field(default=None)
     email: Optional[str] = field(default=None)
+    gmap_link: Optional[str] = field(default=None)
     latitude: Optional[Decimal] = field(default=None)
     longitude: Optional[Decimal] = field(default=None)
 
@@ -21,8 +23,18 @@ class UpdateStoreDTO(BaseDTO):
     """Data Transfer Object for updating existing store records with partial data support."""
 
     name: Optional[str] = field(default=None)
+    city: Optional[str] = field(default=None)
     address: Optional[str] = field(default=None)
     phone: Optional[str] = field(default=None)
     email: Optional[str] = field(default=None)
+    gmap_link: Optional[str] = field(default=None)
     latitude: Optional[Decimal] = field(default=None)
     longitude: Optional[Decimal] = field(default=None)
+
+
+@dataclass
+class FilterDistributorDTO(BaseDTO):
+    """Data Transfer Object for filtering distributor records."""
+
+    name: Optional[str] = field(default=None)
+    city: Optional[str] = field(default=None)

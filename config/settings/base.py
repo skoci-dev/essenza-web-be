@@ -247,6 +247,10 @@ SPECTACULAR_SETTINGS = {
             "description": "Application user management",
         },
         {
+            "name": "Internal / Master Data",
+            "description": "Application master data management",
+        },
+        {
             "name": "Internal / System",
             "description": "Application system management",
         },
