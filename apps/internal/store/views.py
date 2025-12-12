@@ -3,7 +3,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from docs.api.internal import StoreAPI
 from services import StoreService
@@ -20,7 +21,7 @@ class StoreViewSet(BaseViewSet):
         self._store_service = StoreService()
 
     @StoreAPI.create_store_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateStoreRequest)
     def create_store(
         self, request: Request, validated_data: Dict[str, Any]
@@ -68,7 +69,7 @@ class StoreViewSet(BaseViewSet):
         )
 
     @StoreAPI.update_specific_store_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostUpdateStoreRequest)
     def update_specific_store(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -86,7 +87,7 @@ class StoreViewSet(BaseViewSet):
         )
 
     @StoreAPI.delete_specific_store_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_store(self, request: Request, pk: int) -> Response:
         """Delete a specific store by ID with comprehensive error handling."""
         error = self._store_service.use_context(request).delete_specific_store(pk=pk)

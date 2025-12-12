@@ -3,7 +3,8 @@ from rest_framework.response import Response
 
 from core.views import BaseViewSet
 from utils.response import api_response
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from docs.api.internal import MenuAPI
 from services import MenuService
 
@@ -16,7 +17,7 @@ class MenuViewSet(BaseViewSet):
     _menu_service = MenuService()
 
     @MenuAPI.create_menu
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateMenuRequest)
     def create_menu(self, request: Request, validated_data) -> Response:
         """Create a new menu."""
@@ -55,7 +56,7 @@ class MenuViewSet(BaseViewSet):
         )
 
     @MenuAPI.update_specific_menu
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PatchUpdateMenuRequest)
     def update_specific_menu(
         self, request: Request, pk: int, validated_data
@@ -73,7 +74,7 @@ class MenuViewSet(BaseViewSet):
         )
 
     @MenuAPI.delete_specific_menu
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_menu(self, request: Request, pk: int) -> Response:
         """Delete a specific menu by its ID."""
         error = self._menu_service.use_context(request).delete_specific_menu(pk)

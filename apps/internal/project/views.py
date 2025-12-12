@@ -3,7 +3,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from docs.api.internal import ProjectAPI
 from services import ProjectService
@@ -18,7 +19,7 @@ class ProjectViewSet(BaseViewSet):
     _project_service = ProjectService()
 
     @ProjectAPI.create_project_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateProjectRequest)
     def create_project(
         self, request: Request, validated_data: Dict[str, Any]
@@ -104,7 +105,7 @@ class ProjectViewSet(BaseViewSet):
         )
 
     @ProjectAPI.update_specific_project_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PutUpdateProjectRequest)
     def update_specific_project(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -122,7 +123,7 @@ class ProjectViewSet(BaseViewSet):
         )
 
     @ProjectAPI.delete_specific_project_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_project(self, request: Request, pk: int) -> Response:
         """Delete a specific project by its ID."""
         error = self._project_service.use_context(request).delete_specific_project(
@@ -134,7 +135,7 @@ class ProjectViewSet(BaseViewSet):
         return api_response(request).success(message="Project deleted successfully.")
 
     @ProjectAPI.toggle_project_status_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PatchToggleProjectStatusRequest)
     def toggle_project_status(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -154,7 +155,7 @@ class ProjectViewSet(BaseViewSet):
         )
 
     @ProjectAPI.upload_project_image_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostUploadProjectImageRequest)
     def upload_project_image(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -172,7 +173,7 @@ class ProjectViewSet(BaseViewSet):
         )
 
     @ProjectAPI.upload_project_gallery_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostUploadProjectGalleryRequest)
     def upload_project_gallery(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -192,7 +193,7 @@ class ProjectViewSet(BaseViewSet):
         )
 
     @ProjectAPI.delete_project_gallery_image_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_project_gallery_image(
         self, request: Request, pk: int, index: int
     ) -> Response:

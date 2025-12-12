@@ -9,7 +9,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from services import ContactMessageService
 from services.contact_message import dto
@@ -74,7 +75,7 @@ class ContactMessageViewSet(BaseViewSet):
             )
 
     @ContactMessageAPI.get_specific_contact_message_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def get_specific_contact_message(self, request: Request, pk: int) -> Response:
         """Retrieve a specific contact message by its ID."""
         try:
@@ -101,7 +102,7 @@ class ContactMessageViewSet(BaseViewSet):
             )
 
     @ContactMessageAPI.mark_contact_message_as_read_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostMarkAsReadContactMessageSerializer)
     def mark_contact_message_as_read(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -138,7 +139,7 @@ class ContactMessageViewSet(BaseViewSet):
             )
 
     @ContactMessageAPI.delete_contact_message_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_contact_message(self, request: Request, pk: int) -> Response:
         """Delete a specific contact message by its ID."""
         try:

@@ -5,7 +5,8 @@ from rest_framework.response import Response
 
 from core.enums import UserRole
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from docs.api.internal import UserAPI
 from services import UserService
@@ -20,7 +21,7 @@ class UserViewSet(BaseViewSet):
     _user_service = UserService()
 
     @UserAPI.create_user_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN])
     @validate_body(serializers.PostCreateUserRequest)
     def create_user(self, request: Request, validated_data: Dict[str, Any]) -> Response:
         """Create a new user."""
@@ -37,7 +38,7 @@ class UserViewSet(BaseViewSet):
         )
 
     @UserAPI.get_users_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN])
     def get_users(self, request: Request) -> Response:
         """Retrieve all users."""
         page_number = request.GET.get("page", "1")
@@ -54,7 +55,7 @@ class UserViewSet(BaseViewSet):
         )
 
     @UserAPI.get_specific_user_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN])
     def get_specific_user(self, request: Request, pk: int) -> Response:
         """Retrieve a specific user by its ID."""
         user, error = self._user_service.get_specific_user(pk=pk)
@@ -67,7 +68,7 @@ class UserViewSet(BaseViewSet):
         )
 
     @UserAPI.get_user_roles_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN])
     def get_user_roles(self, request: Request) -> Response:
         """Get all available user roles."""
         roles = [{"name": role[0], "label": role[1]} for role in UserRole.choices]
@@ -78,7 +79,7 @@ class UserViewSet(BaseViewSet):
         )
 
     @UserAPI.update_specific_user_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN])
     @validate_body(serializers.PutUpdateUserRequest)
     def update_specific_user(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -96,7 +97,7 @@ class UserViewSet(BaseViewSet):
         )
 
     @UserAPI.delete_specific_user_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN])
     def delete_specific_user(self, request: Request, pk: int) -> Response:
         """Delete a specific user by its ID."""
         error = self._user_service.use_context(request).delete_specific_user(pk=pk)
@@ -108,7 +109,7 @@ class UserViewSet(BaseViewSet):
         )
 
     @UserAPI.toggle_user_status_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN])
     def toggle_user_status(self, request: Request, pk: int) -> Response:
         """Toggle user active status."""
         user, error = self._user_service.use_context(request).toggle_user_status(pk=pk)
@@ -121,7 +122,7 @@ class UserViewSet(BaseViewSet):
         )
 
     @UserAPI.change_user_password_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN])
     @validate_body(serializers.PutChangeUserPasswordRequest)
     def change_user_password(
         self, request: Request, pk: int, validated_data: Dict[str, Any]

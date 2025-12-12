@@ -3,7 +3,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from utils import api_response
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from docs.api.internal import MenuItemAPI
 from services import MenuItemService, menu
 from services.menu_item.dto import CreateMenuItemDTO, UpdateMenuItemDTO
@@ -17,7 +18,7 @@ class MenuItemViewSet(BaseViewSet):
     _menu_item_service = MenuItemService()
 
     @MenuItemAPI.create_menu_item
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateMenuItemRequest)
     def create_menu_item(self, request: Request, validated_data) -> Response:
         """Create a new menu item."""
@@ -57,7 +58,7 @@ class MenuItemViewSet(BaseViewSet):
         )
 
     @MenuItemAPI.update_specific_menu_item
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PatchUpdateMenuItemRequest)
     def update_specific_menu_item(
         self, request: Request, pk: int, validated_data
@@ -75,7 +76,7 @@ class MenuItemViewSet(BaseViewSet):
         )
 
     @MenuItemAPI.delete_specific_menu_item
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_menu_item(self, request: Request, pk: int) -> Response:
         """Delete a specific menu item by its ID."""
         error = self._menu_item_service.use_context(request).delete_specific_menu_item(

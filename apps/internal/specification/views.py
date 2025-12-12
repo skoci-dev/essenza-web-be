@@ -9,7 +9,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from docs.api.internal import SpecificationAPI
 from services import SpecificationService
@@ -58,7 +59,7 @@ class SpecificationViewSet(BaseViewSet):
         )
 
     @SpecificationAPI.update_specific_specification_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PutUpdateSpecificationRequest)
     def update_specific_specification(
         self, request: Request, slug: str, validated_data: Dict[str, Any]

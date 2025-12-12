@@ -2,7 +2,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from services import ProductCategoryService
 from services.product_category import dto
@@ -17,7 +18,7 @@ class ProductCategoryViewSet(BaseViewSet):
     _product_category_service = ProductCategoryService()
 
     @ProductCategoryAPI.create_product_category_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateProductCategoryRequest)
     def create_product_category(self, request: Request, validated_data) -> Response:
         """Create a new product category."""
@@ -85,7 +86,7 @@ class ProductCategoryViewSet(BaseViewSet):
         )
 
     @ProductCategoryAPI.update_product_category_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PutUpdateProductCategoryRequest)
     def update_product_category(
         self, request: Request, slug: str, validated_data
@@ -105,7 +106,7 @@ class ProductCategoryViewSet(BaseViewSet):
         )
 
     @ProductCategoryAPI.delete_product_category_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_product_category(self, request: Request, slug: str) -> Response:
         """Delete a specific product category by ID."""
         product_category_service = ProductCategoryService()

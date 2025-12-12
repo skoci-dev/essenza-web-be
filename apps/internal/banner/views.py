@@ -2,7 +2,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from docs.api.internal import BannerAPI
 from services import BannerService
@@ -17,7 +18,7 @@ class BannerViewSet(BaseViewSet):
     _banner_service = BannerService()
 
     @BannerAPI.create_banner_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateBannerRequest)
     def create_banner(self, request: Request, validated_data) -> Response:
         """Create a new banner."""
@@ -64,7 +65,7 @@ class BannerViewSet(BaseViewSet):
         )
 
     @BannerAPI.update_specific_banner_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostUpdateBannerRequest)
     def update_specific_banner(
         self, request: Request, pk: int, validated_data
@@ -82,7 +83,7 @@ class BannerViewSet(BaseViewSet):
         )
 
     @BannerAPI.delete_specific_banner_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_banner(self, request: Request, pk: int) -> Response:
         """Delete a specific banner by its ID."""
         error = self._banner_service.use_context(request).delete_specific_banner(pk=pk)

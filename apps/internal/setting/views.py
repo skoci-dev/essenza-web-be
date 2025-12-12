@@ -2,9 +2,9 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.internal.setting import serializers
-from core.decorators.authentication import jwt_required
-from core.decorators.validation import validate_body
+from core.decorators import jwt_role_required, jwt_required, validate_body
 from core.views import BaseViewSet
+from core.enums import UserRole
 from services import SettingService
 from docs.api.internal import SettingApi
 from utils.response import api_response
@@ -18,7 +18,7 @@ class SettingsViewSet(BaseViewSet):
     _setting_service = SettingService()
 
     @SettingApi.create_setting
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateSettingRequest)
     def create_setting(self, request: Request, validated_data) -> Response:
         """
@@ -62,7 +62,7 @@ class SettingsViewSet(BaseViewSet):
             return api_response(request).not_found(message="Setting not found")
 
     @SettingApi.update_specific_setting
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PatchUpdateSettingRequest)
     def update_specific_setting(
         self, request: Request, slug: str, validated_data
@@ -82,7 +82,7 @@ class SettingsViewSet(BaseViewSet):
         )
 
     @SettingApi.delete_specific_setting
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_setting(self, request: Request, slug: str) -> Response:
         """
         Delete a specific setting by its slug
