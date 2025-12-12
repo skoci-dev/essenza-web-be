@@ -9,6 +9,7 @@ from .project import ProjectPublicAPI
 from .product import ProductPublicAPI
 from .page import PagePublicAPI
 from .menu import MenuPublicAPI
+from .setting import SettingPublicAPI
 
 __all__ = [
     "SubscriberPublicAPI",
@@ -22,4 +23,5 @@ __all__ = [
     "ProductPublicAPI",
     "PagePublicAPI",
     "MenuPublicAPI",
+    "SettingPublicAPI",
 ]

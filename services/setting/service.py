@@ -1,11 +1,13 @@
 import copy
-from typing import Tuple
+from typing import Optional, Tuple
 from django.db.models.manager import BaseManager
 from django.utils.text import slugify
 
 from core.service import BaseService, required_context
 from core.models import Setting
 from core.enums import ActionType
+
+from . import dto
 
 
 class SettingService(BaseService):
@@ -33,11 +35,16 @@ class SettingService(BaseService):
         )
         return setting
 
-    def get_all_settings(self) -> BaseManager[Setting]:
+    def get_all_settings(
+        self, filters: Optional[dto.FilterSettingsDTO] = None
+    ) -> BaseManager[Setting]:
         """
         Retrieve all application settings
         """
-        return Setting.objects.all()
+        queryset = Setting.objects.all()
+        if filters and filters.is_active is not None:
+            queryset = queryset.filter(is_active=filters.is_active)
+        return queryset
 
     def get_setting_by_slug(self, slug: str) -> Setting | None:
         """
