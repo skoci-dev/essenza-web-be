@@ -43,3 +43,10 @@ class Product(TimeStampedModel, FileUploadModel):
 
     def __str__(self) -> str:
         return f"{self.id}: {self.name}"
+
+    def get_product_type_enum(self) -> ProductType | None:
+        """Get the ProductType enum instance for the product_type field."""
+        try:
+            return ProductType(self.product_type)
+        except ValueError:
+            return None
