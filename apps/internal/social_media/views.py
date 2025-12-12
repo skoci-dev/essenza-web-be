@@ -2,8 +2,8 @@ from typing import Any, Dict
 from rest_framework.request import Request
 from rest_framework.response import Response
 
-from core.decorators.authentication import jwt_required
-from core.decorators.validation import validate_body
+from core.decorators import jwt_required, jwt_role_required, validate_body
+from core.enums import UserRole
 from core.views import BaseViewSet
 from services import SocialMediaService
 from utils.response import api_response
@@ -41,7 +41,7 @@ class SocialMediaViewSet(BaseViewSet):
         )
 
     @SocialMediaAPI.create_social_media
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateSocialMediaRequest)
     def create_social_media(
         self, request: Request, validated_data: Dict[str, Any]
@@ -75,7 +75,7 @@ class SocialMediaViewSet(BaseViewSet):
         )
 
     @SocialMediaAPI.update_social_media
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PatchUpdateSocialMediaRequest)
     def update_social_media(
         self, request: Request, validated_data: Dict[str, Any], pk: int
@@ -96,7 +96,7 @@ class SocialMediaViewSet(BaseViewSet):
         )
 
     @SocialMediaAPI.delete_social_media
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_social_media(self, request: Request, pk: int) -> Response:
         """
         Delete a specific social media entry by its primary key

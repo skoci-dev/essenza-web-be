@@ -7,7 +7,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from docs.api.internal import BrochureAPI
 from services import BrochureService
@@ -22,7 +23,7 @@ class BrochureViewSet(BaseViewSet):
     _brochure_service = BrochureService()
 
     @BrochureAPI.create_brochure_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateBrochureRequest)
     def create_brochure(self, request: Request, validated_data) -> Response:
         """Create a new brochure."""
@@ -76,7 +77,7 @@ class BrochureViewSet(BaseViewSet):
         )
 
     @BrochureAPI.update_specific_brochure_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PutUpdateBrochureRequest)
     def update_specific_brochure(
         self, request: Request, pk: int, validated_data
@@ -94,7 +95,7 @@ class BrochureViewSet(BaseViewSet):
         )
 
     @BrochureAPI.delete_specific_brochure_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_brochure(self, request: Request, pk: int) -> Response:
         """Delete a specific brochure by its ID."""
         error = self._brochure_service.use_context(request).delete_specific_brochure(
@@ -108,7 +109,7 @@ class BrochureViewSet(BaseViewSet):
         )
 
     @BrochureAPI.upload_brochure_file_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostUploadBrochureFileRequest)
     def upload_brochure_file(
         self, request: Request, pk: int, validated_data

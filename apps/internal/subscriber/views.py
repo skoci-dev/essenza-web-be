@@ -2,7 +2,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required
+from core.decorators import jwt_required, jwt_role_required
+from core.enums import UserRole
 from services import SubscriberService
 from utils import api_response
 from docs.api.internal import SubscriberAPI
@@ -44,7 +45,7 @@ class SubscriberViewSet(BaseViewSet):
         )
 
     @SubscriberAPI.delete_subscriber_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_subscriber(self, request: Request, pk: int) -> Response:
         """Delete a specific subscriber by its ID."""
         error = self._subscriber_service.delete_specific_subscriber(pk=pk)

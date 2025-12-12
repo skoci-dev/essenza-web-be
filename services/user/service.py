@@ -4,8 +4,8 @@ from typing import Dict, Tuple
 from django.core.paginator import Page
 from django.db.models.manager import BaseManager
 
-from core.enums import ActionType
-from core.service import BaseService, required_context
+from core.enums import ActionType, UserRole
+from core.service import BaseService, required_context, ServiceException
 from core.models import User
 from utils.log.activity_log import ActivityLogParams
 
@@ -20,6 +20,11 @@ class UserService(BaseService):
     _ERROR_EMAIL_TAKEN = "Email address is already taken"
     _ERROR_USER_NOT_FOUND = "User with id '{pk}' does not exist."
     _ERROR_CURRENT_PASSWORD_INCORRECT = "Current password is incorrect"
+    _ERROR_SUPERADMIN_EXISTS = (
+        "Super Admin user already exists. Only one Super Admin is allowed."
+    )
+    _ERROR_CANNOT_MODIFY_SELF = "You cannot modify your own account."
+    _ERROR_CANNOT_DELETE_SELF = "You cannot delete your own account."
 
     @required_context
     def update_user_profile(
@@ -33,7 +38,7 @@ class UserService(BaseService):
         # Validate and prepare username update
         if data.username and data.username != user.username:
             if not User.available_username(data.username):
-                return user, Exception(self._ERROR_USERNAME_TAKEN)
+                return user, ServiceException(self._ERROR_USERNAME_TAKEN)
 
             fields_to_update["username"] = data.username
 
@@ -44,7 +49,7 @@ class UserService(BaseService):
         # Validate and prepare email update
         if data.email and data.email != user.email:
             if not User.available_email(data.email):
-                return user, Exception(self._ERROR_EMAIL_TAKEN)
+                return user, ServiceException(self._ERROR_EMAIL_TAKEN)
 
             fields_to_update["email"] = data.email
 
@@ -71,7 +76,7 @@ class UserService(BaseService):
 
         # Verify current password
         if not user.check_password(data.current_password):
-            return Exception(self._ERROR_CURRENT_PASSWORD_INCORRECT)
+            return ServiceException(self._ERROR_CURRENT_PASSWORD_INCORRECT)
 
         # Set new password
         user.set_password(data.new_password)
@@ -91,13 +96,19 @@ class UserService(BaseService):
     def create_user(self, data: dto.CreateUserDTO) -> Tuple[User, Exception | None]:
         """Create a new user."""
         try:
+            if (
+                data.role == UserRole.SUPERADMIN
+                and User.objects.filter(role=UserRole.SUPERADMIN).exists()
+            ):
+                return User(), ServiceException(self._ERROR_SUPERADMIN_EXISTS)
+
             # Validate username availability
             if not User.available_username(data.username):
-                return User(), Exception(self._ERROR_USERNAME_TAKEN)
+                return User(), ServiceException(self._ERROR_USERNAME_TAKEN)
 
             # Validate email availability
             if not User.available_email(data.email):
-                return User(), Exception(self._ERROR_EMAIL_TAKEN)
+                return User(), ServiceException(self._ERROR_EMAIL_TAKEN)
 
             # Create user with hashed password
             user_data = data.to_dict()
@@ -143,8 +154,19 @@ class UserService(BaseService):
     ) -> Tuple[User, Exception | None]:
         """Update a specific user by its ID."""
         try:
+            if self.ctx.user.id == pk:
+                return User(), ServiceException(self._ERROR_CANNOT_MODIFY_SELF)
+
             user = User.objects.get(id=pk)
             old_instance = copy.deepcopy(user)
+
+            if (
+                data.role
+                and data.role == UserRole.SUPERADMIN
+                and user.role != UserRole.SUPERADMIN
+                and User.objects.filter(role=UserRole.SUPERADMIN).exists()
+            ):
+                return user, ServiceException(self._ERROR_SUPERADMIN_EXISTS)
 
             # Validate username availability if username is being changed
             if (
@@ -152,7 +174,7 @@ class UserService(BaseService):
                 and data.username != user.username
                 and not User.available_username(data.username)
             ):
-                return user, Exception(self._ERROR_USERNAME_TAKEN)
+                return user, ServiceException(self._ERROR_USERNAME_TAKEN)
 
             # Validate email availability if email is being changed
             if (
@@ -160,7 +182,7 @@ class UserService(BaseService):
                 and data.email != user.email
                 and not User.available_email(data.email)
             ):
-                return user, Exception(self._ERROR_EMAIL_TAKEN)
+                return user, ServiceException(self._ERROR_EMAIL_TAKEN)
 
             for key, value in data.to_dict().items():
                 if value is not None:
@@ -184,6 +206,9 @@ class UserService(BaseService):
     def delete_specific_user(self, pk: int) -> Exception | None:
         """Delete a specific user by its ID."""
         try:
+            if self.ctx.user.id == pk:
+                return ServiceException(self._ERROR_CANNOT_DELETE_SELF)
+
             user = User.objects.get(id=pk)
             old_instance = copy.deepcopy(user)
             user.delete()
@@ -196,7 +221,7 @@ class UserService(BaseService):
             )
             return None
         except User.DoesNotExist:
-            return Exception(self._ERROR_USER_NOT_FOUND.format(pk=pk))
+            return ServiceException(self._ERROR_USER_NOT_FOUND.format(pk=pk))
         except Exception as e:
             return e
 
@@ -204,6 +229,9 @@ class UserService(BaseService):
     def toggle_user_status(self, pk: int) -> Tuple[User, Exception | None]:
         """Toggle user active status."""
         try:
+            if self.ctx.user.id == pk:
+                return User(), ServiceException(self._ERROR_CANNOT_MODIFY_SELF)
+
             user = User.objects.get(id=pk)
             old_instance = copy.deepcopy(user)
 
@@ -229,6 +257,9 @@ class UserService(BaseService):
     ) -> Tuple[User, Exception | None]:
         """Change user password by admin."""
         try:
+            if self.ctx.user.id == pk:
+                return User(), ServiceException(self._ERROR_CANNOT_MODIFY_SELF)
+
             user = User.objects.get(id=pk)
 
             # Set new password
@@ -246,6 +277,6 @@ class UserService(BaseService):
 
             return user, None
         except User.DoesNotExist:
-            return User(), Exception(f"User with id '{pk}' does not exist.")
+            return User(), ServiceException(f"User with id '{pk}' does not exist.")
         except Exception as e:
             return User(), e

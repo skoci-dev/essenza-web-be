@@ -9,7 +9,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from docs.api.internal import ProductAPI
 from services import ProductService
@@ -26,7 +27,7 @@ class ProductViewSet(BaseViewSet):
     _product_service = ProductService()
 
     @ProductAPI.create_product_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateProductRequest)
     def create_product(
         self, request: Request, validated_data: Dict[str, Any]
@@ -147,7 +148,7 @@ class ProductViewSet(BaseViewSet):
             )
 
     @ProductAPI.update_specific_product_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PutUpdateProductRequest)
     def update_specific_product(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -179,7 +180,7 @@ class ProductViewSet(BaseViewSet):
             )
 
     @ProductAPI.delete_specific_product_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_product(self, request: Request, pk: int) -> Response:
         """Delete a specific product by its ID."""
         try:
@@ -204,7 +205,7 @@ class ProductViewSet(BaseViewSet):
             )
 
     @ProductAPI.toggle_product_status_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PatchToggleProductStatusRequest)
     def toggle_product_status(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -237,7 +238,7 @@ class ProductViewSet(BaseViewSet):
             )
 
     @ProductAPI.upload_product_image_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostUploadProductImageRequest)
     def upload_product_image(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -269,7 +270,7 @@ class ProductViewSet(BaseViewSet):
             )
 
     @ProductAPI.upload_product_gallery_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostUploadProductGalleryRequest)
     def upload_product_gallery(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -301,7 +302,7 @@ class ProductViewSet(BaseViewSet):
             )
 
     @ProductAPI.delete_product_gallery_image_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_product_gallery_image(
         self, request: Request, pk: int, index: int
     ) -> Response:
@@ -333,7 +334,7 @@ class ProductViewSet(BaseViewSet):
             )
 
     @ProductAPI.create_product_specification_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateProductSpecificationRequest)
     def create_product_specifications(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -372,7 +373,7 @@ class ProductViewSet(BaseViewSet):
             )
 
     @ProductAPI.delete_product_specification_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_product_specifications(
         self, request: Request, product_id: int, spec_slug: str
     ) -> Response:

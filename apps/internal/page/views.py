@@ -2,7 +2,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from docs.api.internal import PageAPI
 from services import PageService
@@ -17,7 +18,7 @@ class PageViewSet(BaseViewSet):
     _page_service = PageService()
 
     @PageAPI.create_page_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreatePageRequest)
     def create_page(self, request: Request, validated_data) -> Response:
         """Create a new page."""
@@ -77,7 +78,7 @@ class PageViewSet(BaseViewSet):
         )
 
     @PageAPI.update_specific_page_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PutUpdatePageRequest)
     def update_specific_page(
         self, request: Request, pk: int, validated_data
@@ -95,7 +96,7 @@ class PageViewSet(BaseViewSet):
         )
 
     @PageAPI.delete_specific_page_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_page(self, request: Request, pk: int) -> Response:
         """Delete a specific page by its ID."""
         error = self._page_service.use_context(request).delete_specific_page(pk=pk)
@@ -105,7 +106,7 @@ class PageViewSet(BaseViewSet):
         return api_response(request).success(message="Page deleted successfully.")
 
     @PageAPI.toggle_page_status_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PatchTogglePageStatusRequest)
     def toggle_page_status(self, request: Request, pk: int, validated_data) -> Response:
         """Toggle page active status."""

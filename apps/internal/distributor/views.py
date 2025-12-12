@@ -3,7 +3,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from core.views import BaseViewSet
-from core.decorators import jwt_required, validate_body
+from core.decorators import jwt_required, validate_body, jwt_role_required
+from core.enums import UserRole
 from utils import api_response
 from docs.api.internal import DistributorAPI
 from services import DistributorService
@@ -20,7 +21,7 @@ class DistributorViewSet(BaseViewSet):
         self._distributor_service = DistributorService()
 
     @DistributorAPI.create_distributor_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostCreateDistributorRequest)
     def create_distributor(
         self, request: Request, validated_data: Dict[str, Any]
@@ -71,7 +72,7 @@ class DistributorViewSet(BaseViewSet):
         )
 
     @DistributorAPI.update_specific_distributor_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     @validate_body(serializers.PostUpdateDistributorRequest)
     def update_specific_distributor(
         self, request: Request, pk: int, validated_data: Dict[str, Any]
@@ -91,7 +92,7 @@ class DistributorViewSet(BaseViewSet):
         )
 
     @DistributorAPI.delete_specific_distributor_schema
-    @jwt_required
+    @jwt_role_required([UserRole.SUPERADMIN, UserRole.ADMIN])
     def delete_specific_distributor(self, request: Request, pk: int) -> Response:
         """Delete a specific distributor with atomic transaction."""
         error = self._distributor_service.use_context(
