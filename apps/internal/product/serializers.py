@@ -71,9 +71,12 @@ class CategoryChoiceField(serializers.ChoiceField):
     """Custom choice field that displays 'Name (slug)' but uses slug as value."""
 
     def __init__(self, **kwargs):
-        categories = ProductCategory.objects.filter(is_active=True)
-        choices = [(cat.slug, f"{cat.name}") for cat in categories]
-        super().__init__(choices=choices, **kwargs)
+        try:
+            categories = ProductCategory.objects.filter(is_active=True)
+            choices = [(cat.slug, f"{cat.name}") for cat in categories]
+            super().__init__(choices=choices, **kwargs)
+        except Exception:
+            super().__init__(choices=[], **kwargs)
 
 
 class PostCreateProductRequest(serializers.Serializer):
