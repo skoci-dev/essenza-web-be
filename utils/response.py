@@ -69,6 +69,9 @@ class APIResponseMeta(BaseModel):
     request_id: Optional[str] = Field(
         default=None, description="Unique request identifier"
     )
+    error_code: Optional[str] = Field(
+        default=None, description="Optional error or status code"
+    )
     pagination: Optional[PaginationInfo] = Field(
         default=None, description="Pagination information"
     )
@@ -136,6 +139,7 @@ class APIResponseBuilder:
         data: Any = None,
         errors: Optional[List[ErrorDetail]] = None,
         pagination: Optional[PaginationInfo] = None,
+        error_code: Optional[str] = None,
     ) -> Response:
         """
         Internal method to create standardized response with validation.
@@ -147,6 +151,7 @@ class APIResponseBuilder:
             data: Response data
             errors: List of error details
             pagination: Pagination information
+            code: Optional error or status code
 
         Returns:
             DRF Response object
@@ -154,6 +159,7 @@ class APIResponseBuilder:
         meta = APIResponseMeta(
             timestamp=datetime.now().isoformat(),
             request_id=self.request_id,
+            error_code=error_code,
             pagination=pagination,
         )
 
@@ -226,6 +232,7 @@ class APIResponseBuilder:
         errors: Optional[List[ErrorDetail]] = None,
         status_code: int = status.HTTP_400_BAD_REQUEST,
         data: Any = None,
+        error_code: Optional[str] = None,
     ) -> Response:
         """
         Create an error response with optional error details.
@@ -235,6 +242,7 @@ class APIResponseBuilder:
             errors: List of detailed errors
             status_code: HTTP status code
             data: Additional error data
+            code: Optional error or status code
 
         Returns:
             DRF Response object
@@ -245,6 +253,7 @@ class APIResponseBuilder:
             message=message,
             data=data,
             errors=errors,
+            error_code=error_code,
         )
 
     def validation_error(
@@ -277,9 +286,15 @@ class APIResponseBuilder:
         """Create a 401 Unauthorized response."""
         return self.error(message=message, status_code=status.HTTP_401_UNAUTHORIZED)
 
-    def forbidden(self, message: str = "Access forbidden") -> Response:
+    def forbidden(
+        self, message: str = "Access forbidden", error_code: Optional[str] = None
+    ) -> Response:
         """Create a 403 Forbidden response."""
-        return self.error(message=message, status_code=status.HTTP_403_FORBIDDEN)
+        return self.error(
+            message=message,
+            status_code=status.HTTP_403_FORBIDDEN,
+            error_code=error_code,
+        )
 
     def server_error(self, message: str = "Internal server error") -> Response:
         """Create a 500 Internal Server Error response."""

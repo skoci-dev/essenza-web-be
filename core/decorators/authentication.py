@@ -26,6 +26,7 @@ def jwt_required(view_func: Callable[..., Response]) -> Callable[..., Response]:
     Returns:
         The decorated view method with JWT authentication
     """
+
     @wraps(view_func)
     def wrapper(self: Any, request: Request, *args: Any, **kwargs: Any) -> Response:
         """Authentication wrapper for the decorated view method."""
@@ -43,7 +44,9 @@ def jwt_required(view_func: Callable[..., Response]) -> Callable[..., Response]:
     return wrapper
 
 
-def jwt_refresh_token_required(view_func: Callable[..., Response]) -> Callable[..., Response]:
+def jwt_refresh_token_required(
+    view_func: Callable[..., Response],
+) -> Callable[..., Response]:
     """
     Decorator that allows expired JWT tokens for refresh token endpoints.
     This decorator validates token format and user existence but allows expired tokens.
@@ -60,6 +63,7 @@ def jwt_refresh_token_required(view_func: Callable[..., Response]) -> Callable[.
     Returns:
         The decorated view method with refresh token authentication
     """
+
     @wraps(view_func)
     def wrapper(self: Any, request: Request, *args: Any, **kwargs: Any) -> Response:
         """Refresh token authentication wrapper for the decorated view method."""
@@ -78,7 +82,7 @@ def jwt_refresh_token_required(view_func: Callable[..., Response]) -> Callable[.
 
 
 def jwt_role_required(
-    allowed_roles: str | List[str]
+    allowed_roles: str | List[str],
 ) -> Callable[[Callable[..., Response]], Callable[..., Response]]:
     """
     Decorator that enforces JWT authentication with role-based access control.
@@ -148,20 +152,20 @@ def _authenticate_request(request: Request) -> tuple[Any, str]:
     try:
         auth_result = authenticator.authenticate(request)
         if auth_result is None:
-            raise AuthenticationFailed('Authentication credentials were not provided.')
+            raise AuthenticationFailed("Authentication credentials were not provided.")
 
         user, token = auth_result
 
         # Verify user is properly authenticated
-        if not user or not getattr(user, 'is_authenticated', False):
-            raise AuthenticationFailed('Invalid authentication.')
+        if not user or not getattr(user, "is_authenticated", False):
+            raise AuthenticationFailed("Invalid authentication.")
 
         return user, token
 
     except AuthenticationFailed:
         raise
     except Exception as exc:
-        raise AuthenticationFailed(f'Authentication failed: {exc}') from exc
+        raise AuthenticationFailed(f"Authentication failed: {exc}") from exc
 
 
 def _authenticate_refresh_token_request(request: Request) -> tuple[Any, str]:
@@ -178,20 +182,20 @@ def _authenticate_refresh_token_request(request: Request) -> tuple[Any, str]:
     Raises:
         AuthenticationFailed: If authentication fails (excluding expiration)
     """
-    auth_header = request.META.get('HTTP_AUTHORIZATION')
-    if not auth_header or not auth_header.startswith('Bearer '):
-        raise AuthenticationFailed('Authentication credentials were not provided.')
+    auth_header = request.META.get("HTTP_AUTHORIZATION")
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise AuthenticationFailed("Authentication credentials were not provided.")
 
     try:
-        _, token = auth_header.split(' ', 1)
+        _, token = auth_header.split(" ", 1)
         token = token.strip()
     except ValueError as e:
         raise AuthenticationFailed(
-            'Invalid authorization header format. Expected: Bearer <token>'
+            "Invalid authorization header format. Expected: Bearer <token>"
         ) from e
 
     if not token:
-        raise AuthenticationFailed('Token is required.')
+        raise AuthenticationFailed("Token is required.")
 
     # Validate token structure and extract user (allow expired tokens)
     try:
@@ -199,23 +203,21 @@ def _authenticate_refresh_token_request(request: Request) -> tuple[Any, str]:
         from core.models import User
 
         user = User.objects.get(
-            id=JsonWebToken().get_subject(
-                token, expiration=False, signature=False
-            )
+            id=JsonWebToken().get_subject(token, expiration=False, signature=False)
         )
         jwt_handler = JsonWebToken(user.token_signature)
 
         # Try to decode without expiration validation first
         username = jwt_handler.get_subject(token, expiration=False)
         if not username:
-            raise AuthenticationFailed('Token payload is invalid - missing username.')
+            raise AuthenticationFailed("Token payload is invalid - missing username.")
 
         return user, token
 
     except AuthenticationFailed:
         raise
     except Exception as exc:
-        raise AuthenticationFailed(f'Token validation failed: {exc}') from exc
+        raise AuthenticationFailed(f"Token validation failed: {exc}") from exc
 
 
 def _check_user_role_permissions(user: Any, required_roles: List[str]) -> None:
@@ -233,30 +235,31 @@ def _check_user_role_permissions(user: Any, required_roles: List[str]) -> None:
         return  # No role restrictions
 
     # Get user role - assuming user has a 'role' attribute
-    user_role = getattr(user, 'role', None)
+    user_role = getattr(user, "role", None)
 
     if not user_role:
-        raise PermissionDenied('User role is not defined.')
+        raise PermissionDenied("User role is not defined.")
 
     # Check if user role is in the allowed roles
     # Handle both string role and role object with 'name' attribute
-    if hasattr(user_role, 'name'):
+    if hasattr(user_role, "name"):
         user_role_name = user_role.name
-    elif hasattr(user_role, 'value'):
+    elif hasattr(user_role, "value"):
         user_role_name = user_role.value
     else:
         user_role_name = str(user_role)
 
     if user_role_name not in required_roles:
-        raise PermissionDenied(
+        error = PermissionDenied(
             f'Access denied. Required roles: {", ".join(required_roles)}. '
-            f'User role: {user_role_name}'
+            f"User role: {user_role_name}"
         )
+        error.default_code = "auth_insufficient_role"
+        raise error
 
 
 def get_method_authentication_classes(
-    view: Any,
-    method_name: str
+    view: Any, method_name: str
 ) -> List[Type[BaseAuthentication]]:
     """
     Determine authentication classes for a specific view method.
@@ -271,17 +274,16 @@ def get_method_authentication_classes(
     """
     method = getattr(view, method_name, None)
     if method and (
-        getattr(method, '_jwt_required', False) or
-        getattr(method, '_jwt_refresh_required', False) or
-        getattr(method, '_jwt_role_required', False)
+        getattr(method, "_jwt_required", False)
+        or getattr(method, "_jwt_refresh_required", False)
+        or getattr(method, "_jwt_role_required", False)
     ):
         return [JWTAuthentication]
     return []
 
 
 def get_method_permission_classes(
-    view: Any,
-    method_name: str
+    view: Any, method_name: str
 ) -> List[Type[BasePermission]]:
     """
     Determine permission classes for a specific view method.
@@ -296,9 +298,9 @@ def get_method_permission_classes(
     """
     method = getattr(view, method_name, None)
     if method and (
-        getattr(method, '_jwt_required', False) or
-        getattr(method, '_jwt_refresh_required', False) or
-        getattr(method, '_jwt_role_required', False)
+        getattr(method, "_jwt_required", False)
+        or getattr(method, "_jwt_refresh_required", False)
+        or getattr(method, "_jwt_role_required", False)
     ):
         return [IsAuthenticated]
     return []
