@@ -21,6 +21,27 @@ from core.enums import ProductType, product_type
 PRODUCT_ACTIVE_STATUS_HELP = "Product active status"
 
 
+class ProductCollectionSerializer(serializers.ModelSerializer):
+    """Serializer for product collection response."""
+
+    category = serializers.CharField(source="category.name", allow_null=True)
+    product_type = serializers.CharField(
+        source="get_product_type_display", allow_null=True
+    )
+
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "slug",
+            "name",
+            "image",
+            "product_type",
+            "category",
+            "is_active",
+        ]
+
+
 class BrochureNestedSerializer(serializers.ModelSerializer):
     """Nested serializer for Brochure in Product detail."""
 
@@ -33,17 +54,37 @@ class BrochureNestedSerializer(serializers.ModelSerializer):
         ]
 
 
-class ProductCollectionSerializer(serializers.ModelSerializer):
-    """Serializer for product collection response."""
-
-    category = serializers.CharField(source="category.name", allow_null=True)
-    product_type = serializers.CharField(
-        source="get_product_type_display", allow_null=True
-    )
+class ProductCategoryNestedSerializer(serializers.ModelSerializer):
+    """Nested serializer for ProductCategory in Product detail."""
 
     class Meta:
-        model = Product
-        fields = ["id", "slug", "name", "image", "product_type", "category", "is_active"]
+        model = ProductCategory
+        fields = [
+            "id",
+            "slug",
+            "name",
+        ]
+
+
+class ProductTypeNestedSerializer(serializers.Serializer):
+    """Nested serializer for ProductType in Product detail."""
+
+    slug = serializers.CharField(source="value")
+    label = serializers.CharField()
+
+
+class SpecificationNestedSerializer(serializers.ModelSerializer):
+    """Nested serializer for Specification in Product detail."""
+
+    id = serializers.IntegerField(source="specification.id")
+    slug = serializers.CharField(source="specification.slug")
+    name = serializers.CharField(source="specification.name")
+    icon = serializers.CharField(source="specification.icon")
+    order_number = serializers.IntegerField(source="specification.order_number")
+
+    class Meta:
+        model = ProductSpecification
+        fields = ["id", "slug", "name", "icon", "value", "highlighted", "order_number"]
 
 
 class ProductModelSerializer(serializers.ModelSerializer):
@@ -51,6 +92,13 @@ class ProductModelSerializer(serializers.ModelSerializer):
 
     brochure = BrochureNestedSerializer(read_only=True)
     gallery = serializers.SerializerMethodField()
+    category = ProductCategoryNestedSerializer(allow_null=True, read_only=True)
+    product_type = ProductTypeNestedSerializer(
+        source="get_product_type_enum", allow_null=True, read_only=True
+    )
+    specifications = SpecificationNestedSerializer(
+        source="product_specifications", many=True, read_only=True
+    )
 
     class Meta:
         model = Product
