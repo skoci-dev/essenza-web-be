@@ -25,7 +25,9 @@ class ProductPublicViewSet(BaseViewSet):
         page = ProductPublicViewSet._product_service.get_paginated_products(
             str_page_number=str_page_number,
             str_page_size=str_page_size,
-            filters=dto.ProductFilterDTO(is_active=True, fulltext_search=search),
+            filters=dto.ProductFilterDTO(
+                is_active=True, fulltext_search=search, sort_by="name", sort_order="asc"
+            ),
         )
 
         return api_response(request).paginated(

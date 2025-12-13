@@ -476,13 +476,16 @@ def _handle_update_action(
         mask_sensitive=mask_sensitive,
     )
 
-    # Handle no-change scenarios with VIEW action for complete audit trail
+    # Handle no-change scenarios with NO_CHANGE action for complete audit trail
     if not changed_fields:
         return ActivityLog.create_for_instance(
             instance=instance,
-            action=ActionType.VIEW,
-            description=f"No changes detected for {old_instance._entity}: {old_instance}",
-            **actor_info,
+            action=ActionType.NO_CHANGE,
+            description=(
+                f"Attempted to update {old_instance._entity}, "
+                f"but no changes were detected."
+            ),
+            ** actor_info,
             **base_params,
         )
 

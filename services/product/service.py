@@ -150,12 +150,16 @@ class ProductService(BaseService):
         Returns:
             QuerySet of filtered and ordered products
         """
-        queryset = Product.objects.select_related("brochure")
+        queryset = Product.objects.select_related("brochure").order_by("-created_at")
 
         if filters:
             # Use full-text search if specified (overrides basic search)
             if fulltext_search := filters.fulltext_search:
                 return self._search_with_mysql_fulltext(queryset, fulltext_search)
+
+            if filters.sort_by in ["name", "created_at", "product_type"]:
+                sort_order = "" if filters.sort_order == "asc" else "-"
+                queryset = queryset.order_by(f"{sort_order}{filters.sort_by}")
 
             filter_conditions = Q()
 
@@ -171,7 +175,7 @@ class ProductService(BaseService):
 
             queryset = queryset.filter(filter_conditions)
 
-        return queryset.order_by("-created_at")
+        return queryset
 
     def get_paginated_products(
         self,
@@ -613,7 +617,11 @@ class ProductService(BaseService):
 
         # Handle gallery update
         if data.gallery:
-            self._cleanup_old_gallery_images(product.gallery)
+            existing_gallery_items = [
+                item for item in data.gallery if isinstance(item, str)
+            ]
+            removed_gallery_items = set(product.gallery) - set(existing_gallery_items)
+            self._cleanup_old_gallery_images(list(removed_gallery_items))
             update_data["gallery"] = self._process_gallery_images(
                 data.gallery, data.slug or product.slug
             )
@@ -876,6 +884,18 @@ class ProductService(BaseService):
             Tuple containing the updated product and any error that occurred
         """
         try:
+            if deleted_specs := [
+                spec.slug for spec in specifications if spec.deleted and spec.slug
+            ]:
+                if err := self.remove_specifications_from_product(
+                    product_id, deleted_specs
+                ):
+                    raise err
+
+                specifications = [
+                    spec for spec in specifications if spec.slug not in deleted_specs
+                ]
+
             if err := self._validate_product_specifications(specifications):
                 raise err
 
@@ -976,27 +996,26 @@ class ProductService(BaseService):
         try:
             product = Product.objects.get(id=product_id)
 
-            with transaction.atomic():
-                for slug in specification_slugs:
-                    try:
-                        product_spec = ProductSpecification.objects.get(
-                            product=product,
-                            specification__slug=slug,
-                        )
-                        product_spec.delete()
+            for slug in specification_slugs:
+                try:
+                    product_spec = ProductSpecification.objects.get(
+                        product=product,
+                        specification__slug=slug,
+                    )
+                    product_spec.delete()
 
-                        self.log_entity_change(
-                            self.ctx,
-                            product_spec,
-                            action=ActionType.DELETE,
-                            description=(
-                                f"Specification '{slug}' removed from product '{product.name}'."
-                            ),
-                        )
-                    except ProductSpecification.DoesNotExist:
-                        logger.warning(
-                            f"Specification '{slug}' not found for product '{product.name}'."
-                        )
+                    self.log_entity_change(
+                        self.ctx,
+                        product_spec,
+                        action=ActionType.DELETE,
+                        description=(
+                            f"Specification '{slug}' removed from product '{product.name}'."
+                        ),
+                    )
+                except ProductSpecification.DoesNotExist:
+                    logger.warning(
+                        f"Specification '{slug}' not found for product '{product.name}'."
+                    )
             return None
 
         except Product.DoesNotExist:

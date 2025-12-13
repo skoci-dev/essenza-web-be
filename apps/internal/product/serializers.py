@@ -3,7 +3,6 @@ Product API Serializers
 Contains all serializers for product-related API operations
 """
 
-from email.policy import default
 from rest_framework import serializers
 from typing import List
 from django.conf import settings
@@ -12,10 +11,10 @@ from core.models import (
     Product,
     Brochure,
     ProductSpecification,
-    Specification,
     ProductCategory,
 )
-from core.enums import ProductType, product_type
+from core.enums import ProductType
+from core.serializers import FlexibleImageField
 
 # Constants
 PRODUCT_ACTIVE_STATUS_HELP = "Product active status"
@@ -208,19 +207,17 @@ class PutUpdateProductRequest(serializers.Serializer):
         required=False,
         help_text="Product type (lantai/dinding)",
     )
-    image = serializers.ImageField(
+    image = FlexibleImageField(
         required=False,
-        allow_empty_file=True,
-        use_url=False,
-        default=None,
-        help_text="Product main image",
+        allow_null=True,
+        help_text="Product main image (file upload or existing path)",
     )
     gallery = serializers.ListField(
-        child=serializers.ImageField(allow_empty_file=True, use_url=False),
+        child=FlexibleImageField(allow_null=True),
         required=False,
         allow_empty=True,
-        default=None,
-        help_text="Product gallery images",
+        allow_null=True,
+        help_text="Product gallery images (file uploads or existing paths)",
     )
     brochure_id = serializers.IntegerField(
         required=False, allow_null=True, help_text="ID of associated brochure"
@@ -302,11 +299,18 @@ class PostCreateProductSpecificationRequest(serializers.Serializer):
     class SpecificationItemSerializer(serializers.Serializer):
         """Serializer for individual specification item."""
 
+        id = serializers.IntegerField(
+            required=False, help_text="Existing specification ID"
+        )
         slug = serializers.CharField(help_text="Specification slug")
         value = serializers.CharField(help_text="Specification value")
         highlighted = serializers.BooleanField(
             required=False,
             help_text="Whether to highlight this specification (false: technical specs, true: key features)",
+        )
+        deleted = serializers.BooleanField(
+            required=False,
+            help_text="Flag to indicate if this specification should be deleted",
         )
 
     specifications = serializers.ListField(

@@ -9,6 +9,7 @@ class ActionType(models.TextChoices):
     UPDATE = "update", "Update"
     DELETE = "delete", "Delete"
     VIEW = "view", "View"
+    NO_CHANGE = "no_change", "No Change"
 
     # Authentication actions
     LOGIN = "login", "Login"
