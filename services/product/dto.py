@@ -74,6 +74,8 @@ class ProductFilterDTO(BaseDTO):
     search: str | None = field(default=None)
     is_active: bool | None = field(default=None)
     fulltext_search: str | None = field(default=None)
+    sort_by: str | None = field(default=None)
+    sort_order: str | None = field(default=None)
 
 
 @dataclass
@@ -83,3 +85,5 @@ class CreateProductSpecificationItemDTO(BaseDTO):
     slug: str
     value: str
     highlighted: bool | None = field(default=None)
+    id: int | None = field(default=None)
+    deleted: bool | None = field(default=None)
